@@ -89,14 +89,24 @@ namespace DetectorApi.Core
                 return null;
             }
 
-            var cacheKey = string.Join("::", keys);
+            var combinedKey = string.Join("::", keys);
 
+            // Get from cache, if present.
             if (Cache != null &&
-                Cache.ContainsKey(cacheKey))
+                Cache.ContainsKey(combinedKey))
             {
-                return Cache[cacheKey].ToString();
+                return Cache[combinedKey].ToString();
             }
 
+            // Get from environment, if present.
+            var envValue = Environment.GetEnvironmentVariable(combinedKey);
+
+            if (envValue != null)
+            {
+                return envValue;
+            }
+
+            // Get from loaded config file, if present.
             var dict = Storage;
 
             for (var i = 0; i < keys.Length; i++)
@@ -115,13 +125,13 @@ namespace DetectorApi.Core
                 {
                     Cache ??= new Dictionary<string, object>();
 
-                    if (Cache.ContainsKey(cacheKey))
+                    if (Cache.ContainsKey(combinedKey))
                     {
-                        Cache[cacheKey] = dict[keys[i]];
+                        Cache[combinedKey] = dict[keys[i]];
                     }
                     else
                     {
-                        Cache.Add(cacheKey, dict[keys[i]]);
+                        Cache.Add(combinedKey, dict[keys[i]]);
                     }
 
                     return dict[keys[i]].ToString();
@@ -144,6 +154,7 @@ namespace DetectorApi.Core
                 }
             }
 
+            // No value found in any of the locations.
             return null;
         }
 
