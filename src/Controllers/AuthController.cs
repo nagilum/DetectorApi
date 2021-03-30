@@ -159,6 +159,7 @@ namespace DetectorApi.Controllers
         /// Log the user out by deleting the cookie.
         /// </summary>
         [HttpDelete]
+        [VerifyAuthorization]
         public ActionResult LogOut()
         {
             this.Response.Cookies.Delete("AccessToken");

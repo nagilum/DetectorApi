@@ -8,10 +8,29 @@
         <link rel="icon" href="/assets/img/box.svg?v=1.0">
     </head>
     <body>
+        <header class="hidden">
+            <h1>Detector</h1>
+
+            <ul>
+                <li><a>Resources</a></li>
+                <li><a>Alerts</a></li>
+            </ul>
+
+            <div>
+                <a data-on-click="HeaderToggleUserMenu"></a>
+            </div>
+        </header>
+
+        <menu id="UserMenu" class="hidden">
+            <ul>
+                <li><a data-on-click="MenuSignOut">Sign out</a></li>
+            </ul>
+        </menu>
         
         <script src="/assets/js/shorthand.js?v1.0"></script>
         <script src="/assets/js/api.js?v1.0"></script>
         <script src="/assets/js/auth.js?v1.0"></script>
+        <script src="/assets/js/interface.js?v1.0"></script>
         <script src="/assets/js/auto-functions.js?v1.0"></script>
     </body>
 </html>

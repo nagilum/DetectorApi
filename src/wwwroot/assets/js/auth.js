@@ -5,7 +5,15 @@
  * @param {Object} user User object.
  */
 const AddUserToInterface = async (user) => {
+    const header = qs('header'),
+        a = qs('header div a');
+
     console.log('user', user);
+
+    a.setAttribute('style', `background-image: url('${user.pictureUrl}');`);
+    a.setAttribute('title', `Logged in as ${user.name}`);
+
+    header.classList.remove('hidden');
 };
 
 /**
