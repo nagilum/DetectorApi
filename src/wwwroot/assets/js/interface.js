@@ -85,7 +85,8 @@ const PanelResourcesLoad = async () => {
 const PanelResourceLoad = async () => {
     const panel = qs('panel#PanelResource'),
         eid = panel.getAttribute('data-entity-id'),
-        resource = await GetResource(eid);
+        resource = await GetResource(eid),
+        results = await GetResults(eid);
 
     panel.classList.remove('loading');
 
@@ -94,7 +95,9 @@ const PanelResourceLoad = async () => {
         tbName = qs('input#TextBoxEditResourceName'),
         tbUrl = qs('input#TextBoxEditResourceUrl'),
         tbLastScan = qs('input#TextBoxEditResourceLastScan'),
-        tbNextScan = qs('input#TextBoxEditResourceNextScan');
+        tbNextScan = qs('input#TextBoxEditResourceNextScan'),
+        table = panel.querySelector('table'),
+        tbody = table.querySelector('tbody');
 
     // Id
     tbId.value = resource.id;
@@ -114,6 +117,72 @@ const PanelResourceLoad = async () => {
 
     // Next scan
     tbNextScan.value = resource.nextScan;
+
+    // Table
+    tbody.innerHTML = '';
+
+    results.forEach(result => {
+        const tr = ce('tr'),
+            tdCreated = ce('td'),
+            tdUpdated = ce('td'),
+            tdStatusCode = ce('td'),
+            tdSslError = ce('td'),
+            tdConnectingIp = ce('td'),
+            tdGeneralError = ce('td');
+
+        let cls;
+
+        // Created
+        tdCreated.innerText = result.created;
+
+        // Updated
+        tdUpdated.innerText = result.updated;
+
+        // StatusCode
+        if (result.statusCode >= 200 && result.statusCode < 300) {
+            cls = 'ok';
+        }
+        else if (result.statusCode >= 300 && result.statusCode < 400) {
+            cls = 'warning';
+        }
+        else if (result.statusCode >= 400) {
+            cls = 'error';
+        }
+
+        tdStatusCode.innerText = result.statusCode;
+        tdStatusCode.classList.add('status-text');
+        tdStatusCode.classList.add(cls);
+
+        // SSL Error
+        tdSslError.innerText = result.sslErrorCode
+            ? `${result.sslErrorCode}: ${result.sslErrorMessage}`
+            : '';
+
+        if (result.sslErrorCode) {
+            tdSslError.classList.add('status-text');
+            tdSslError.classList.add('error');
+        }
+
+        // Connecting IP
+        tdConnectingIp.innerText = result.connectingIp;
+
+        // General Error
+        tdGeneralError.innerText = result.exceptionMessage;
+
+        if (result.exceptionMessage) {
+            tdGeneralError.classList.add('status-text');
+            tdGeneralError.classList.add('error');
+        }
+
+        // Done
+        tr.appendChild(tdCreated);
+        tr.appendChild(tdUpdated);
+        tr.appendChild(tdStatusCode);
+        tr.appendChild(tdSslError);
+        tr.appendChild(tdConnectingIp);
+        tr.appendChild(tdGeneralError);
+        tbody.appendChild(tr);
+    });
 };
 
 /**

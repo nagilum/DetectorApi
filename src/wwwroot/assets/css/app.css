@@ -200,6 +200,12 @@ body {
                 background-color: #aec937; }
               body panel table tbody tr td.status.ok {
                 background-color: #347d39; }
+            body panel table tbody tr td.status-text.ok {
+              color: #347d39; }
+            body panel table tbody tr td.status-text.error {
+              color: #c93c37; }
+            body panel table tbody tr td.status-text.warning {
+              color: #aec937; }
           body panel table tbody tr:hover td {
             background-color: #2d333b; }
             body panel table tbody tr:hover td.status.error {

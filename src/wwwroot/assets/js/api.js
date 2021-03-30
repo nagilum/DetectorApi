@@ -26,6 +26,19 @@ const GetResource = async (id) => {
 }
 
 /**
+ * Get results from API.
+ * @param {String} id Resource id.
+ * @returns {Array} List of results.
+ */
+const GetResults = async (id) => {
+    const res = await fetch(`/api/result?resourceId=${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+}
+
+/**
  * Get settings from API.
  * @returns {Object} Settings values.
  */

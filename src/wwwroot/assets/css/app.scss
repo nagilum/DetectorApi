@@ -294,6 +294,20 @@ body {
                                 background-color: #347d39;
                             }
                         }
+
+                        &.status-text {
+                            &.ok {
+                                color: #347d39;
+                            }
+        
+                            &.error {
+                                color: #c93c37;
+                            }
+        
+                            &.warning {
+                                color: #aec937;
+                            }
+                        }
                     }
 
                     &:hover {
