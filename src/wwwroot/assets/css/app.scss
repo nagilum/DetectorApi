@@ -16,6 +16,7 @@ body {
         background-color: #347d39;
         border: solid 1px #46954a;
         border-radius: 5px;
+        cursor: pointer;
         display: inline-block;
         font-weight: bold;
         padding: 5px 15px;
@@ -35,6 +36,16 @@ body {
                 background-color: #c93c37;
                 border-color: #e5534b;
                 color: #fff;
+            }
+        }
+
+        &.neutral {
+            background-color: #373e47;
+            border-color: #444c56;
+
+            &:hover {
+                background-color: #444c56;
+                border-color: #768390;
             }
         }
     }
@@ -174,14 +185,62 @@ body {
             display: block;
             margin: 0;
             padding: 0;
+        }
 
-            a {
-                cursor: pointer;
+        form {
+            margin: 50px 0 0 0;
+            padding: 0;
+
+            div {
+                &.form-item {
+                    padding: 1px 0;
+    
+                    label {
+                        cursor: pointer;
+                        display: inline-block;
+                        font-weight: bold;
+                        width: 100px;
+    
+                        &::after {
+                            content: ':';
+                        }
+                    }
+    
+                    input {
+                        background-color: rgba(28, 33, 40, .5);
+                        border: solid 1px #373e47;
+                        border-radius: 5px;
+                        color: #adbac7;
+                        display: inline-block;
+                        padding: 10px;
+                        width: 300px;
+    
+                        &.readonly {
+                            background-color: transparent;
+                            border-color: transparent;
+                        }
+    
+                        &.ok {
+                            color: #347d39;
+                            font-weight: bold;
+                        }
+    
+                        &.error {
+                            color: #c93c37;
+                            font-weight: bold;
+                        }
+    
+                        &.warning {
+                            color: #aec937;
+                            font-weight: bold;
+                        }
+                    }
+                }
             }
         }
 
         table {
-            margin: 50px 0;
+            margin: 50px 0 0 0;
             padding: 0;
             width: 100%;
 
@@ -217,11 +276,39 @@ body {
                         a {
                             cursor: pointer;
                         }
+
+                        &.status {
+                            border-radius: 5px;
+                            font-weight: bold;
+                            padding-left: 10px;
+
+                            &.error {
+                                background-color: #c93c37;
+                            }
+
+                            &.warning {
+                                background-color: #aec937;
+                            }
+
+                            &.ok {
+                                background-color: #347d39;
+                            }
+                        }
                     }
 
                     &:hover {
                         td {
                             background-color: #2d333b;
+
+                            &.status {
+                                &.error {
+                                    background-color: #e5534b;
+                                }
+
+                                &.ok {
+                                    background-color: #46954a;
+                                }
+                            }
                         }
                     }
                 }

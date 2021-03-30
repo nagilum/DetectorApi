@@ -35,6 +35,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Status</th>
                         <th>Id</th>
                         <th>Name</th>
                         <th>Url</th>
@@ -46,8 +47,50 @@
             </table>
         </panel>
 
+        <panel id="PanelResource" class="hidden" data-fn-on-show="PanelResourceLoad">
+            <toolbar>
+                <a data-on-click="TogglePanel" data-dom-id="PanelResources" class="button neutral">Back</a>
+                <a data-on-click="PanelSaveResource" class="button">Save</a>
+                <a data-on-click="PanelDeleteResource" class="button danger">Delete</a>
+            </toolbar>
+
+            <form>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceId">ID</label>
+                    <input type="text" id="TextBoxEditResourceId" readonly class="readonly">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceStatus">Status</label>
+                    <input type="text" id="TextBoxEditResourceStatus" readonly class="readonly">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceName">Name</label>
+                    <input type="text" id="TextBoxEditResourceName">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceUrl">URL</label>
+                    <input type="text" id="TextBoxEditResourceUrl">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceLastScan">Last Scan</label>
+                    <input type="text" id="TextBoxEditResourceLastScan" readonly class="readonly">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxEditResourceNextScan">Next Scan</label>
+                    <input type="text" id="TextBoxEditResourceNextScan" readonly class="readonly">
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </thead>
+                </table>
+            </form>
+        </panel>
+
         <panel id="PanelAlerts" class="hidden" data-fn-on-show="PanelAlertsLoad">
-            LIST OF ALERTS
         </panel>
         
         <script src="/assets/js/shorthand.js?v1.0"></script>

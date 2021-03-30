@@ -14,6 +14,7 @@ body {
     background-color: #347d39;
     border: solid 1px #46954a;
     border-radius: 5px;
+    cursor: pointer;
     display: inline-block;
     font-weight: bold;
     padding: 5px 15px;
@@ -29,6 +30,12 @@ body {
         background-color: #c93c37;
         border-color: #e5534b;
         color: #fff; }
+    body .button.neutral {
+      background-color: #373e47;
+      border-color: #444c56; }
+      body .button.neutral:hover {
+        background-color: #444c56;
+        border-color: #768390; }
   body .hidden {
     display: none; }
   body header {
@@ -125,10 +132,40 @@ body {
       display: block;
       margin: 0;
       padding: 0; }
-      body panel toolbar a {
-        cursor: pointer; }
+    body panel form {
+      margin: 50px 0 0 0;
+      padding: 0; }
+      body panel form div.form-item {
+        padding: 1px 0; }
+        body panel form div.form-item label {
+          cursor: pointer;
+          display: inline-block;
+          font-weight: bold;
+          width: 100px; }
+          body panel form div.form-item label::after {
+            content: ':'; }
+        body panel form div.form-item input {
+          background-color: rgba(28, 33, 40, 0.5);
+          border: solid 1px #373e47;
+          border-radius: 5px;
+          color: #adbac7;
+          display: inline-block;
+          padding: 10px;
+          width: 300px; }
+          body panel form div.form-item input.readonly {
+            background-color: transparent;
+            border-color: transparent; }
+          body panel form div.form-item input.ok {
+            color: #347d39;
+            font-weight: bold; }
+          body panel form div.form-item input.error {
+            color: #c93c37;
+            font-weight: bold; }
+          body panel form div.form-item input.warning {
+            color: #aec937;
+            font-weight: bold; }
     body panel table {
-      margin: 50px 0;
+      margin: 50px 0 0 0;
       padding: 0;
       width: 100%; }
       body panel table thead {
@@ -153,5 +190,19 @@ body {
             padding: 5px; }
             body panel table tbody tr td a {
               cursor: pointer; }
+            body panel table tbody tr td.status {
+              border-radius: 5px;
+              font-weight: bold;
+              padding-left: 10px; }
+              body panel table tbody tr td.status.error {
+                background-color: #c93c37; }
+              body panel table tbody tr td.status.warning {
+                background-color: #aec937; }
+              body panel table tbody tr td.status.ok {
+                background-color: #347d39; }
           body panel table tbody tr:hover td {
             background-color: #2d333b; }
+            body panel table tbody tr:hover td.status.error {
+              background-color: #e5534b; }
+            body panel table tbody tr:hover td.status.ok {
+              background-color: #46954a; }

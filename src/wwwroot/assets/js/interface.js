@@ -34,17 +34,24 @@ const PanelResourcesLoad = async () => {
 
     resources.forEach(resource => {
         const tr = ce('tr'),
+            tdStatus = ce('td'),
             tdId = ce('td'),
             tdName = ce('td'),
             tdUrl = ce('td'),
             tdLastScan = ce('td'),
             tdNextScan = ce('td');
 
+        // Status
+        tdStatus.innerText = resource.status;
+        tdStatus.classList.add('status');
+        tdStatus.classList.add(resource.status.toLowerCase());
+
         // Id
         const aid = ce('a');
 
-        aid.innerText = resource.identifier;
+        aid.innerText = resource.id;
         aid.setAttribute('data-dom-id', 'PanelResource');
+        aid.setAttribute('data-entity-id', resource.id);
         aid.addEventListener('click', TogglePanel);
 
         tdId.appendChild(aid);
@@ -56,12 +63,13 @@ const PanelResourcesLoad = async () => {
         tdUrl.innerText = resource.url;
 
         // Last Scan
-        tdLastScan.innerText = resource.updated;
+        tdLastScan.innerText = resource.lastScan;
 
         // Next Scan
         tdNextScan.innerText = resource.nextScan;
 
         // Done
+        tr.appendChild(tdStatus);
         tr.appendChild(tdId);
         tr.appendChild(tdName);
         tr.appendChild(tdUrl);
@@ -69,6 +77,43 @@ const PanelResourcesLoad = async () => {
         tr.appendChild(tdNextScan);
         tbody.appendChild(tr);
     });
+};
+
+/**
+ * Load and display a single resource.
+ */
+const PanelResourceLoad = async () => {
+    const panel = qs('panel#PanelResource'),
+        eid = panel.getAttribute('data-entity-id'),
+        resource = await GetResource(eid);
+
+    panel.classList.remove('loading');
+
+    const tbId = qs('input#TextBoxEditResourceId'),
+        tbStatus = qs('input#TextBoxEditResourceStatus'),
+        tbName = qs('input#TextBoxEditResourceName'),
+        tbUrl = qs('input#TextBoxEditResourceUrl'),
+        tbLastScan = qs('input#TextBoxEditResourceLastScan'),
+        tbNextScan = qs('input#TextBoxEditResourceNextScan');
+
+    // Id
+    tbId.value = resource.id;
+
+    // Status
+    tbStatus.value = resource.status;
+    tbStatus.classList.add(resource.status.toLowerCase());
+
+    // Name
+    tbName.value = resource.name;
+
+    // Url
+    tbUrl.value = resource.url;
+
+    // Last scan
+    tbLastScan.value = resource.lastScan;
+
+    // Next scan
+    tbNextScan.value = resource.nextScan;
 };
 
 /**
@@ -94,7 +139,8 @@ const TogglePanel = async (e) => {
         e.preventDefault();
     }
 
-    const id = e.target.getAttribute('data-dom-id');
+    const id = e.target.getAttribute('data-dom-id'),
+        eid = e.target.getAttribute('data-entity-id');
 
     qsa('panel').forEach(panel => {
         const pid = panel.getAttribute('id');
@@ -105,6 +151,7 @@ const TogglePanel = async (e) => {
         }
 
         panel.classList.remove('hidden');
+        panel.setAttribute('data-entity-id', eid);
 
         const fn = panel.getAttribute('data-fn-on-show');
 
@@ -125,6 +172,7 @@ const TogglePanel = async (e) => {
     // Make functions globally accessable.
     window['MenuSignOut'] = MenuSignOut;
     window['PanelResourcesLoad'] = PanelResourcesLoad;
+    window['PanelResourceLoad'] = PanelResourceLoad;
     window['TogglePanel'] = TogglePanel;
     window['ToggleElementHiddenState'] = ToggleElementHiddenState;
 

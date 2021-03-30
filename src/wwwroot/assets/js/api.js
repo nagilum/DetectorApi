@@ -13,6 +13,19 @@ const GetResources = async () => {
 }
 
 /**
+ * Get resource from API.
+ * @param {String} id Resource id.
+ * @returns {Object} Resource.
+ */
+const GetResource = async (id) => {
+    const res = await fetch(`/api/resource/${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : {};
+}
+
+/**
  * Get settings from API.
  * @returns {Object} Settings values.
  */
