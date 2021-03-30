@@ -1,22 +1,10 @@
 "use strict";
 
 /**
- * Toggle the visibility of the user menu.
- * @param {Event} e Click event.
- */
-const HeaderToggleUserMenu = async (e) => {
-    if (e) {
-        e.preventDefault();
-    }
-
-    qs('menu#UserMenu').classList.toggle('hidden');
-};
-
-/**
  * Sign the user out of the system.
  * @param {Event} e Click event.
  */
-const MenuSignOut = async (e) => {
+ const MenuSignOut = async (e) => {
     if (e) {
         e.preventDefault();
     }
@@ -32,9 +20,33 @@ const MenuSignOut = async (e) => {
 };
 
 /**
+ * Toggle the visibility of an element.
+ * @param {Event} e Click event.
+ */
+const ToggleElementHiddenState = async (e) => {
+    if (e) {
+        e.preventDefault();
+    }
+
+    qs(`#${e.target.getAttribute('data-dom-id')}`).classList.toggle('hidden');
+};
+
+/**
  * Setup some of the functions as global functions.
  */
 (async () => {
-    window['HeaderToggleUserMenu'] = HeaderToggleUserMenu;
+    // Make functions globally accessable.
     window['MenuSignOut'] = MenuSignOut;
+    window['ToggleElementHiddenState'] = ToggleElementHiddenState;
+
+    // Map click auto-functions.
+    qsa('a').forEach(a => {
+        const fn = a.getAttribute('data-on-click');
+
+        if (!fn) {
+            return;
+        }
+
+        a.addEventListener('click', window[fn]);
+    });
 })();
