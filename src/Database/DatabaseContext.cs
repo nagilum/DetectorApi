@@ -17,6 +17,8 @@ namespace DetectorApi.Database
 
         #region DbSets
 
+        public DbSet<Resource> Resources { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         #endregion

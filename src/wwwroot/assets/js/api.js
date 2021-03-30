@@ -1,6 +1,18 @@
 "use strict";
 
 /**
+ * Get resources from API.
+ * @returns {Array} List of resources.
+ */
+const GetResources = async () => {
+    const res = await fetch('/api/resource');
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+}
+
+/**
  * Get settings from API.
  * @returns {Object} Settings values.
  */

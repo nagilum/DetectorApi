@@ -12,8 +12,8 @@
             <h1>Detector</h1>
 
             <ul>
-                <li><a>Resources</a></li>
-                <li><a>Alerts</a></li>
+                <li><a data-on-click="TogglePanel" data-dom-id="PanelResources">Resources</a></li>
+                <li><a data-on-click="TogglePanel" data-dom-id="PanelAlerts">Alerts</a></li>
             </ul>
 
             <div>
@@ -21,11 +21,34 @@
             </div>
         </header>
 
-        <menu id="UserMenu" class="hidden">
+        <menu id="MenuUser" class="hidden">
             <ul>
                 <li><a data-on-click="MenuSignOut">Sign out</a></li>
             </ul>
         </menu>
+
+        <panel id="PanelResources" class="hidden" data-fn-on-show="PanelResourcesLoad">
+            <toolbar>
+                <a data-on-click="PanelOpenAddResourcePopup" class="button">Add Resource</a>
+            </toolbar>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Url</th>
+                        <th>Last Scan</th>
+                        <th>Next Scan</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </panel>
+
+        <panel id="PanelAlerts" class="hidden" data-fn-on-show="PanelAlertsLoad">
+            LIST OF ALERTS
+        </panel>
         
         <script src="/assets/js/shorthand.js?v1.0"></script>
         <script src="/assets/js/api.js?v1.0"></script>

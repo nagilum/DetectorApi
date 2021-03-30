@@ -10,6 +10,25 @@ body {
   line-height: 1.5;
   margin: 0;
   padding: 0; }
+  body .button {
+    background-color: #347d39;
+    border: solid 1px #46954a;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    padding: 5px 15px;
+    transition: .25s; }
+    body .button:hover {
+      background-color: #46954a;
+      border-color: #57ab5a; }
+    body .button.danger {
+      background-color: #373e47;
+      border-color: #444c56;
+      color: #e5534b; }
+      body .button.danger:hover {
+        background-color: #c93c37;
+        border-color: #e5534b;
+        color: #fff; }
   body .hidden {
     display: none; }
   body header {
@@ -66,7 +85,7 @@ body {
     margin: 0;
     padding: 0;
     width: 200px; }
-    body menu#UserMenu {
+    body menu#MenuUser {
       position: absolute;
       right: 5px;
       top: 55px; }
@@ -91,3 +110,48 @@ body {
             background-color: #316dca;
             color: #cdd9e5;
             text-decoration: none; }
+  body panel {
+    display: block;
+    margin: 0;
+    min-height: 100px;
+    padding: 20px 20px 80px 20px; }
+    body panel.loading {
+      background-image: url("/assets/img/ajax-loader.gif");
+      background-position: center;
+      background-repeat: no-repeat; }
+      body panel.loading * {
+        display: none; }
+    body panel toolbar {
+      display: block;
+      margin: 0;
+      padding: 0; }
+      body panel toolbar a {
+        cursor: pointer; }
+    body panel table {
+      margin: 50px 0;
+      padding: 0;
+      width: 100%; }
+      body panel table thead {
+        margin: 0;
+        padding: 0; }
+        body panel table thead tr {
+          margin: 0;
+          padding: 0; }
+          body panel table thead tr th {
+            font-weight: bold;
+            margin: 0;
+            padding: 5px;
+            text-align: left; }
+      body panel table tbody {
+        margin: 0;
+        padding: 0; }
+        body panel table tbody tr {
+          margin: 0;
+          padding: 0; }
+          body panel table tbody tr td {
+            margin: 0;
+            padding: 5px; }
+            body panel table tbody tr td a {
+              cursor: pointer; }
+          body panel table tbody tr:hover td {
+            background-color: #2d333b; }
