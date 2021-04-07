@@ -53,12 +53,8 @@ const BrowserHistoryAdd = async (e) => {
 const BrowserHistoryOnPopState = async (e) => {
     const state = e.state;
 
-    console.log('BrowserHistoryOnPopState');
-    console.log('e', e);
-    console.log('state', state);
-
     // Load frontpage.
-    if (!state || !state.type) {
+    if (!state) {
         await TogglePanel();
         return;
     }
@@ -71,6 +67,11 @@ const BrowserHistoryOnPopState = async (e) => {
 
         case 'resource':
             await TogglePanel(null, 'PanelResource', state.id);
+            break;
+
+        default:
+            console.error(`Implementation Error! Browser state '${state.type}' is not handled!`);
+            console.log('state', state);
             break;
     }
 };
