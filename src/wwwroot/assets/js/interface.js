@@ -1,6 +1,76 @@
 "use strict";
 
 /**
+ * If it's a valid link, push the state to browser history.
+ * @param {Event} e Click event.
+ */
+const BrowserHistoryAdd = async (e) => {
+    const typeOf = typeof(e);
+
+    let href,
+        type;
+
+    switch (typeOf) {
+        case 'string':
+            href = e;
+            break;
+
+        case 'object':
+            if (!e.target) {
+                console.error(`Implementation Error! In function 'BrowserHistoryAdd', parameter 'e' is of type 'object' but does not have a 'target'!`);
+                return;
+            }
+
+            href = e.target.getAttribute('href');
+
+            break;
+
+        default:
+            console.error(`Implementation Error! In function 'BrowserHistoryAdd', parameter 'e' is of type '${typeOf}' which is not handled!`);
+            return;
+    }
+
+    if (!href) {
+        return;
+    }
+
+    type = e?.target?.getAttribute('data-type');
+
+    window.history.pushState(
+        {
+            href,
+            type
+        },
+        document.title,
+        href);
+};
+
+/**
+ * Navigate based on history states.
+ * @param {Event} e History pop event.
+ */
+const BrowserHistoryOnPopState = async (e) => {
+    const state = e.state;
+
+    console.log('BrowserHistoryOnPopState');
+    console.log('e', e);
+    console.log('state', state);
+
+    // Load frontpage.
+    if (!state || !state.type) {
+        await TogglePanel();
+        return;
+    }
+
+    // Load by type.
+    switch (state.type) {
+        case 'resources':
+            await TogglePanel(null, 'PanelResources');
+            break;
+    }
+};
+
+/**
  * Sign the user out of the system.
  * @param {Event} e Click event.
  */
@@ -50,6 +120,7 @@ const PanelResourcesLoad = async () => {
         const aid = ce('a');
 
         aid.innerText = resource.id;
+        aid.setAttribute('href', `/resource/${resource.id}`);
         aid.setAttribute('data-dom-id', 'PanelResource');
         aid.setAttribute('data-entity-id', resource.id);
         aid.addEventListener('click', TogglePanel);
@@ -57,7 +128,15 @@ const PanelResourcesLoad = async () => {
         tdId.appendChild(aid);
 
         // Name
-        tdName.innerText = resource.name;
+        const aname = ce('a');
+
+        aname.innerText = resource.name;
+        aname.setAttribute('href', `/resource/${resource.id}`);
+        aname.setAttribute('data-dom-id', 'PanelResource');
+        aname.setAttribute('data-entity-id', resource.id);
+        aname.addEventListener('click', TogglePanel);
+
+        tdName.appendChild(aname);
 
         // Url
         tdUrl.innerText = resource.url;
@@ -202,14 +281,24 @@ const ToggleElementHiddenState = async (e) => {
 /**
  * Toggle the visibility of a panel (hide others) and init the load function.
  * @param {Event} e Click event.
+ * @param {String} passedId Passed 'id' variable.
+ * @param {String} passedEid Passed 'eid' variable.
  */
-const TogglePanel = async (e) => {
+const TogglePanel = async (e, passedId, passedEid) => {
     if (e) {
         e.preventDefault();
     }
 
-    const id = e.target.getAttribute('data-dom-id'),
-        eid = e.target.getAttribute('data-entity-id');
+    let id = e?.target?.getAttribute('data-dom-id'),
+        eid = e?.target?.getAttribute('data-entity-id');
+
+    if (passedId) {
+        id = passedId;
+    }
+
+    if (passedEid) {
+        eid = passedEid;
+    }
 
     qsa('panel').forEach(panel => {
         const pid = panel.getAttribute('id');
@@ -239,6 +328,7 @@ const TogglePanel = async (e) => {
  */
 (async () => {
     // Make functions globally accessable.
+    window['BrowserHistoryAdd'] = BrowserHistoryAdd;
     window['MenuSignOut'] = MenuSignOut;
     window['PanelResourcesLoad'] = PanelResourcesLoad;
     window['PanelResourceLoad'] = PanelResourceLoad;
@@ -258,6 +348,10 @@ const TogglePanel = async (e) => {
             return;
         }
 
+        a.addEventListener('click', BrowserHistoryAdd);
         a.addEventListener('click', window[fn]);
     });
+
+    // Setup pop-state.
+    window.onpopstate = BrowserHistoryOnPopState;
 })();

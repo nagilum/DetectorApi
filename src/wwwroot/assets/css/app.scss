@@ -68,6 +68,10 @@ body {
             font-weight: bold;
             margin: 0;
             padding: 15px 0 0 20px;
+
+            span {
+                font-weight: normal;
+            }
         }
 
         ul {
@@ -82,11 +86,14 @@ body {
                 padding: 0 30px 0 0;
 
                 a {
+                    color: #adbac7;
                     cursor: pointer;
+                    text-decoration: none;
                     transition: .25s;
 
                     &:hover {
                         color: #fff;
+                        text-decoration: underline;
                     }
                 }
             }
@@ -274,7 +281,13 @@ body {
                         padding: 5px;
 
                         a {
+                            color: #adbac7;
                             cursor: pointer;
+                            text-decoration: none;
+
+                            &:hover {
+                                text-decoration: underline;
+                            }
                         }
 
                         &.status {
