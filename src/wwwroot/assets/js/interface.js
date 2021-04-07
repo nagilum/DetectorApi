@@ -96,6 +96,34 @@ const MenuSignOut = async (e) => {
 };
 
 /**
+ * Open the correct panel based on the URL when the document was loaded.
+ */
+const OpenPanelBasedOnUrl = async () => {
+    const hash = window.location.hash;
+
+    if (!hash || hash === '#') {
+        return;
+    }
+
+    const parts = hash.substr(1).split('/');
+
+    // Load resources?
+    if (parts.length === 1 && parts[0] === 'resources') {
+        await TogglePanel(null, 'PanelResources');
+    }
+
+    // Load single resource?
+    if (parts.length === 2 && parts[0] === 'resource') {
+        await TogglePanel(null, 'PanelResource', parts[1]);
+    }
+
+    // Something else?
+    else {
+        console.warn(`Possible Implementation Error! No clause for pathname '${window.location.pathname}' on-load.`, parts);
+    }
+};
+
+/**
  * Load and display the resources.
  */
 const PanelResourcesLoad = async () => {
@@ -126,7 +154,7 @@ const PanelResourcesLoad = async () => {
         const aid = ce('a');
 
         aid.innerText = resource.id;
-        aid.setAttribute('href', `/resource/${resource.id}`);
+        aid.setAttribute('href', `/#resource/${resource.id}`);
         aid.setAttribute('data-dom-id', 'PanelResource');
         aid.setAttribute('data-entity-id', resource.id);
         aid.setAttribute('data-type', 'resource');
@@ -139,7 +167,7 @@ const PanelResourcesLoad = async () => {
         const aname = ce('a');
 
         aname.innerText = resource.name;
-        aname.setAttribute('href', `/resource/${resource.id}`);
+        aname.setAttribute('href', `/#resource/${resource.id}`);
         aname.setAttribute('data-dom-id', 'PanelResource');
         aname.setAttribute('data-entity-id', resource.id);
         aname.setAttribute('data-type', 'resource');
@@ -375,4 +403,7 @@ const TogglePanel = async (e, passedId, passedEid) => {
 
     // Setup pop-state.
     window.onpopstate = BrowserHistoryOnPopState;
+
+    // Open the correct panel based on the URL when the document was loaded.
+    await OpenPanelBasedOnUrl();
 })();
