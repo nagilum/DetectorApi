@@ -13,7 +13,6 @@
 
             <ul>
                 <li><a href="/#resources" data-on-click="TogglePanel" data-dom-id="PanelResources" data-type="resources">Resources</a></li>
-                <li><a href="/#alerts" data-on-click="TogglePanel" data-dom-id="PanelAlerts">Alerts</a></li>
             </ul>
 
             <div>
@@ -31,6 +30,8 @@
             <toolbar>
                 <a data-on-click="PanelOpenAddResourcePopup" class="button">Add Resource</a>
             </toolbar>
+
+            <h2>Resources</h2>
 
             <table>
                 <thead>
@@ -72,6 +73,10 @@
                     <input type="text" id="TextBoxEditResourceUrl">
                 </div>
                 <div class="form-item">
+                    <label for="TextBoxEditResourceCreated">Created</label>
+                    <input type="text" id="TextBoxEditResourceCreated" readonly class="readonly">
+                </div>
+                <div class="form-item">
                     <label for="TextBoxEditResourceLastScan">Last Scan</label>
                     <input type="text" id="TextBoxEditResourceLastScan" readonly class="readonly">
                 </div>
@@ -80,23 +85,46 @@
                     <input type="text" id="TextBoxEditResourceNextScan" readonly class="readonly">
                 </div>
 
-                <table>
+                <h2>Scans</h2>
+
+                <table id="scanResults">
                     <thead>
                         <tr>
-                            <td>Created</td>
-                            <td>Updated</td>
-                            <td>StatusCode</td>
-                            <td>SSL Error</td>
-                            <td>Connecting IP</td>
-                            <td>General Error</td>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>StatusCode</th>
+                            <th>SSL Error</th>
+                            <th>Connecting IP</th>
+                            <th>General Error</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
-            </form>
-        </panel>
 
-        <panel id="PanelAlerts" class="hidden" data-fn-on-show="PanelAlertsLoad">
+                <h2>Alerts</h2>
+
+                <table id="alerts">
+                    <thead>
+                        <tr>
+                            <th>Created</th>
+                            <th>Type</th>
+                            <th>Url</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <h2>Logs</h2>
+
+                <!--
+                    Change Log
+                        - Resource Created: [name] [url] [user]
+                        - Resource Updated: [name] [url] [user]
+                        - Resource Deleted: [user]
+                        - Error: [type] [message]
+                -->
+            </form>
         </panel>
         
         <script src="/assets/js/shorthand.js?v1.0"></script>

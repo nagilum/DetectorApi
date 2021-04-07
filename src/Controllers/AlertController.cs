@@ -9,13 +9,13 @@ namespace DetectorApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultController : ControllerBase
+    public class AlertController : ControllerBase
     {
         /// <summary>
-        /// Get a list of all scan results.
+        /// Get a list of all alerts.
         /// </summary>
         /// <param name="resourceId">Resource to filter by.</param>
-        /// <returns>List of scan results.</returns>
+        /// <returns>List of alerts.</returns>
         [HttpGet]
         [VerifyAuthorization]
         public async Task<ActionResult> GetAll([FromQuery] string resourceId = null)
@@ -41,12 +41,12 @@ namespace DetectorApi.Controllers
                     return this.NotFound(null);
                 }
 
-                var results = await db.ScanResults
+                var alerts = await db.Alerts
                     .Where(n => n.ResourceId == resource.Id)
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
 
-                var list = results
+                var list = alerts
                     .Select(n => n.CreateApiOutput())
                     .ToList();
 

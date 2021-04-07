@@ -17,6 +17,8 @@ namespace DetectorApi.Database
 
         #region DbSets
 
+        public DbSet<Alert> Alerts { get; set; }
+
         public DbSet<Resource> Resources { get; set; }
 
         public DbSet<ScanResult> ScanResults { get; set; }

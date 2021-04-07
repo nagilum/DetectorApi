@@ -1,6 +1,19 @@
 "use strict";
 
 /**
+ * Get alerts from API.
+ * @param {String} id Resource id.
+ * @returns {Array} List of alerts.
+ */
+const GetAlerts = async (id) => {
+    const res = await fetch(`/api/alert?resourceId=${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+}
+
+/**
  * Get resources from API.
  * @returns {Array} List of resources.
  */

@@ -23,6 +23,9 @@ namespace DetectorApi.Database.Tables
         public DateTimeOffset? Deleted { get; set; }
 
         [Column]
+        public DateTimeOffset? LastScan { get; set; }
+
+        [Column]
         public DateTimeOffset? NextScan { get; set; }
 
         [Column]
@@ -57,7 +60,8 @@ namespace DetectorApi.Database.Tables
                 status = this.Status,
                 name = this.Name,
                 url = this.Url,
-                lastScan = this.Updated,
+                created = this.Created,
+                lastScan = this.LastScan,
                 nextScan = this.NextScan
             };
         }

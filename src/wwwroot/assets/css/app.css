@@ -169,8 +169,14 @@ body {
           body panel form div.form-item input.warning {
             color: #aec937;
             font-weight: bold; }
-    body panel table {
+    body panel h2 {
+      font-size: 20px;
+      font-weight: normal;
       margin: 50px 0 0 0;
+      padding: 0;
+      text-transform: uppercase; }
+    body panel table {
+      margin: 0;
       padding: 0;
       width: 100%; }
       body panel table thead {
