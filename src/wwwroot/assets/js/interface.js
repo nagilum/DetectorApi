@@ -7,8 +7,7 @@
 const BrowserHistoryAdd = async (e) => {
     const typeOf = typeof(e);
 
-    let href,
-        type;
+    let href;
 
     switch (typeOf) {
         case 'string':
@@ -34,12 +33,14 @@ const BrowserHistoryAdd = async (e) => {
         return;
     }
 
-    type = e?.target?.getAttribute('data-type');
+    const type = e?.target?.getAttribute('data-type'),
+        id = e?.target?.getAttribute('data-entity-id');
 
     window.history.pushState(
         {
             href,
-            type
+            type,
+            id
         },
         document.title,
         href);
@@ -66,6 +67,10 @@ const BrowserHistoryOnPopState = async (e) => {
     switch (state.type) {
         case 'resources':
             await TogglePanel(null, 'PanelResources');
+            break;
+
+        case 'resource':
+            await TogglePanel(null, 'PanelResource', state.id);
             break;
     }
 };
@@ -123,6 +128,8 @@ const PanelResourcesLoad = async () => {
         aid.setAttribute('href', `/resource/${resource.id}`);
         aid.setAttribute('data-dom-id', 'PanelResource');
         aid.setAttribute('data-entity-id', resource.id);
+        aid.setAttribute('data-type', 'resource');
+        aid.addEventListener('click', BrowserHistoryAdd);
         aid.addEventListener('click', TogglePanel);
 
         tdId.appendChild(aid);
@@ -134,6 +141,8 @@ const PanelResourcesLoad = async () => {
         aname.setAttribute('href', `/resource/${resource.id}`);
         aname.setAttribute('data-dom-id', 'PanelResource');
         aname.setAttribute('data-entity-id', resource.id);
+        aname.setAttribute('data-type', 'resource');
+        aname.addEventListener('click', BrowserHistoryAdd);
         aname.addEventListener('click', TogglePanel);
 
         tdName.appendChild(aname);
@@ -187,6 +196,7 @@ const PanelResourceLoad = async () => {
 
     // Name
     tbName.value = resource.name;
+    document.title = `Detector - ${resource.name}`;
 
     // Url
     tbUrl.value = resource.url;
@@ -301,12 +311,17 @@ const TogglePanel = async (e, passedId, passedEid) => {
     }
 
     qsa('panel').forEach(panel => {
-        const pid = panel.getAttribute('id');
+        const pid = panel.getAttribute('id'),
+            title = panel.getAttribute('data-title');
 
         if (pid !== id) {
             panel.classList.add('hidden');
             return;
         }
+
+        document.title = title
+            ? `Detector - ${title}`
+            : 'Detector';
 
         panel.classList.remove('hidden');
         panel.setAttribute('data-entity-id', eid);
@@ -314,6 +329,11 @@ const TogglePanel = async (e, passedId, passedEid) => {
         const fn = panel.getAttribute('data-fn-on-show');
 
         if (!fn || !window[fn]) {
+            return;
+        }
+
+        if (!window[fn]) {
+            console.error(`Implementation Error! Function not found: ${fn}`);
             return;
         }
 
