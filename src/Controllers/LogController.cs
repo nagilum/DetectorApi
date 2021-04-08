@@ -10,13 +10,13 @@ namespace DetectorApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AlertController : ControllerBase
+    public class LogController : ControllerBase
     {
         /// <summary>
-        /// Get a list of all alerts.
+        /// Get all log messages attached to a resource.
         /// </summary>
-        /// <param name="resourceId">Resource to filter by.</param>
-        /// <returns>List of alerts.</returns>
+        /// <param name="resourceId">Id of resource.</param>
+        /// <returns>List of logs.</returns>
         [HttpGet]
         [VerifyAuthorization]
         public async Task<ActionResult> GetAll([FromQuery] string resourceId = null)
@@ -42,13 +42,16 @@ namespace DetectorApi.Controllers
                     throw new NotFoundResponseException();
                 }
 
-                var alerts = await db.Alerts
-                    .Where(n => n.ResourceId == resource.Id)
+                var logs = await db.Logs
+                    .Where(n => n.ReferenceType == "resource" &&
+                                n.ReferenceId == resource.Id)
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
 
-                var list = alerts
-                    .Select(n => n.CreateApiOutput())
+                var users = await db.Users.ToListAsync();
+
+                var list = logs
+                    .Select(n => n.CreateApiOutput(users))
                     .ToList();
 
                 return this.Ok(list);

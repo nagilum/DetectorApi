@@ -204,7 +204,8 @@ const PanelResourceLoad = async () => {
         eid = panel.getAttribute('data-entity-id'),
         resource = await GetResource(eid),
         results = await GetResults(eid),
-        alerts = await GetAlerts(eid);
+        alerts = await GetAlerts(eid),
+        logs = await GetLogs(eid);
 
     panel.classList.remove('loading');
 
@@ -215,10 +216,14 @@ const PanelResourceLoad = async () => {
         tbCreated = qs('input#TextBoxEditResourceCreated'),
         tbLastScan = qs('input#TextBoxEditResourceLastScan'),
         tbNextScan = qs('input#TextBoxEditResourceNextScan'),
+        tableIssues = panel.querySelector('table#issues'),
         tableScanResults = panel.querySelector('table#scanResults'),
         tableAlerts = panel.querySelector('table#alerts'),
+        tableLogs = panel.querySelector('table#logs'),
+        tbodyIssues = tableIssues.querySelector('tbody'),
         tbodyScanResults = tableScanResults.querySelector('tbody'),
-        tbodyAlerts = tableAlerts.querySelector('tbody');
+        tbodyAlerts = tableAlerts.querySelector('tbody'),
+        tbodyLogs = tableLogs.querySelector('tbody');
 
     // Id
     tbId.value = resource.id;
@@ -247,6 +252,30 @@ const PanelResourceLoad = async () => {
     // Clear tables.
     tbodyScanResults.innerHTML = '';
     tbodyAlerts.innerHTML = '';
+
+    // Add issues.
+    resource.issues.forEach(result => {
+        const tr = ce('tr'),
+            tdStatus = ce('td'),
+            tdStarted = ce('td'),
+            tdLastUpdated = ce('td'),
+            tdError = ce('td');
+
+        // Status
+
+        // Started
+
+        // Last Updated
+
+        // Error
+
+        // Done
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdStarted);
+        tr.appendChild(tdLastUpdated);
+        tr.appendChild(tdError);
+        tbodyIssues.appendChild(tr);
+    });
 
     // Add each scan result.
     results.forEach(result => {
@@ -338,6 +367,45 @@ const PanelResourceLoad = async () => {
         tr.appendChild(tdUrl);
         tr.appendChild(tdMessage);
         tbodyAlerts.appendChild(tr);
+    });
+
+    // Add logs.
+    logs.forEach(log => {
+        const tr = ce('tr'),
+            tdCreated = ce('td'),
+            tdMessage = ce('td'),
+            tdType = ce('td'),
+            tdUser = ce('td');
+
+        // Created
+        tdCreated.innerText = log.created;
+
+        // Message
+        tdMessage.innerText = log.message;
+
+        // Type
+        tdType.innerText = log.type;
+        tdType.classList.add('status');
+
+        switch (log.type) {
+            case 'critical':
+                tdType.classList.add('error');
+                break;
+
+            case 'warning':
+                tdType.classList.add('warning');
+                break;
+        }
+
+        // User
+        tdUser.innerText = log.user;
+
+        // Done
+        tr.appendChild(tdCreated);
+        tr.appendChild(tdMessage);
+        tr.appendChild(tdType);
+        tr.appendChild(tdUser);
+        tbodyLogs.appendChild(tr);
     });
 };
 

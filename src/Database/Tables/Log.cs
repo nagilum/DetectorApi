@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DetectorApi.Database.Tables
@@ -33,6 +35,33 @@ namespace DetectorApi.Database.Tables
 
         [Column]
         public long? ReferenceId { get; set; }
+
+        #endregion
+
+        #region Instance functions
+
+        /// <summary>
+        /// Create object for API output.
+        /// </summary>
+        /// <returns>Object.</returns>
+        public object CreateApiOutput(List<User> users = null)
+        {
+            users ??= new DatabaseContext().Users.ToList();
+
+            var user = this.UserId.HasValue
+                ? users.FirstOrDefault(n => n.Id == this.UserId.Value)
+                : null;
+            
+            return new
+            {
+                created = this.Created,
+                message = this.Message,
+                type = this.Type,
+                referenceType = this.ReferenceType,
+                referenceId = this.ReferenceId,
+                user = user?.Name
+            };
+        }
 
         #endregion
 

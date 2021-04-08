@@ -14,6 +14,19 @@ const GetAlerts = async (id) => {
 }
 
 /**
+ * Get logs from API.
+ * @param {String} id Resource id.
+ * @returns {Array} List of logs.
+ */
+const GetLogs = async (id) => {
+    const res = await fetch(`/api/log?resourceId=${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+}
+
+/**
  * Get resources from API.
  * @returns {Array} List of resources.
  */
