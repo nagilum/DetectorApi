@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using DetectorApi.Exceptions;
 
 namespace DetectorApi.Controllers
 {
@@ -22,10 +23,7 @@ namespace DetectorApi.Controllers
         {
             if (resourceId == null)
             {
-                return this.BadRequest(new
-                {
-                    message = "The query-parameter 'resourceId' is required"
-                });
+                throw new BadRequestResponseException("The query-parameter 'resourceId' is required");
             }
 
             try
@@ -38,7 +36,7 @@ namespace DetectorApi.Controllers
 
                 if (resource == null)
                 {
-                    return this.NotFound(null);
+                    throw new NotFoundResponseException();
                 }
 
                 var results = await db.ScanResults
@@ -51,6 +49,17 @@ namespace DetectorApi.Controllers
                     .ToList();
 
                 return this.Ok(list);
+            }
+            catch (BadRequestResponseException ex)
+            {
+                return this.BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+            catch (NotFoundResponseException)
+            {
+                return this.NotFound(null);
             }
             catch
             {

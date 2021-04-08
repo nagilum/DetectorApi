@@ -25,7 +25,7 @@ namespace DetectorApi.Controllers
         /// <param name="payload">Credentials from Google one-tap login.</param>
         /// <returns>API token.</returns>
         [HttpPost]
-        public async Task<ActionResult> VerifyGoogleCredentials(AuthPostPayload payload)
+        public async Task<ActionResult> VerifyGoogleCredentials([FromBody] AuthPostPayload payload)
         {
             if (payload?.Credentials == null)
             {
