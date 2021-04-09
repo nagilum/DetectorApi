@@ -15,12 +15,22 @@ const BrowserHistoryAdd = async (e) => {
             break;
 
         case 'object':
-            if (!e.target) {
+            let el = e.target;
+
+            if (!el) {
                 console.error(`Implementation Error! In function 'BrowserHistoryAdd', parameter 'e' is of type 'object' but does not have a 'target'!`);
                 return;
             }
 
-            href = e.target.getAttribute('href');
+            while (true) {
+                if (el.tagName.toLowerCase() === 'a') {
+                    break;
+                }
+
+                el = el.parentElement;
+            }
+
+            href = el.getAttribute('href');
 
             break;
 
@@ -77,6 +87,41 @@ const BrowserHistoryOnPopState = async (e) => {
 };
 
 /**
+ * Get stats and populate stuff.
+ */
+const GetStatsAndPopulate = async () => {
+    const stats = await GetStats();
+
+    // Update version.
+    const version = qs('header > h1 > span');
+
+    if (version) {
+        version.innerText = `Version ${stats.app.version}`;
+    }
+
+    // Update resource count.
+    const src = qs('a#HeaderLinkResources > span.count');
+
+    if (src) {
+        src.innerText = stats.stats.resourceCount;
+    }
+
+    // Update open issues count.
+    const soic = qs('a#HeaderLinkOpenIssues > span.count');
+
+    if (soic) {
+        soic.innerText = stats.stats.openIssueCount;
+
+        if (stats.stats.openIssueCount > 0) {
+            soic.classList.add('alert');
+        }
+        else {
+            soic.classList.remove('alert');
+        }
+    }
+};
+
+/**
  * Sign the user out of the system.
  * @param {Event} e Click event.
  */
@@ -129,12 +174,78 @@ const OpenPanelBasedOnUrl = async () => {
 };
 
 /**
+ * Load and display the issues.
+ */
+const PanelIssuesLoad = async () => {
+    const panel = qs('panel#PanelIssues'),
+        issues = await GetIssues(),
+        resources = await GetResources(),
+        alerts = await GetAlerts(),
+        openIssues = issues.filter(n => !n.resolved);
+    
+    const table = qs('table#openIssuesList'),
+        tbody = table.qs('tbody');
+
+    panel.classList.remove('loading');
+
+    tbody.innerHTML = '';
+    
+    openIssues.forEach(issue => {
+        const resource = resources.filter(n => n.id === issue.resourceId)[0];
+
+        if (!resource) {
+            return;
+        }
+
+        const tr = ce('tr'),
+            tdResource = ce('td'),
+            tdCreated = ce('td'),
+            tdUpdated = ce('td'),
+            tdAlerts = ce('td'),
+            tdMessage = ce('td');
+
+        // Resource.
+        const ra = ce('a');
+
+        ra.innerText = `[${resource.identifier}] ${resource.name}`;
+        ra.setAttribute('href', `/#resource/${resource.identifier}`);
+        ra.setAttribute('data-dom-id', 'PanelResource');
+        ra.setAttribute('data-entity-id', resource.identifier);
+        ra.setAttribute('data-type', 'resource');
+        ra.addEventListener('click', BrowserHistoryAdd);
+        ra.addEventListener('click', TogglePanel);
+
+        tdResource.appendChild(ra);
+        
+        // Created.
+        tdCreated.innerText = issue.created;
+
+        // Updated.
+        tdUpdated.innerText = issue.updated;
+
+        // Alerts.
+        tdAlerts.innerText = alerts.filter(n => n.issueId === issue.id).length;
+
+        // Message.
+        tdMessage.innerText = issue.message;
+
+        // Add to table.
+        tr.appendChild(tdResource);
+        tr.appendChild(tdCreated);
+        tr.appendChild(tdUpdated);
+        tr.appendChild(tdAlerts);
+        tr.appendChild(tdMessage);
+        tbody.appendChild(tr);
+    });
+};
+
+/**
  * Load and display the resources.
  */
 const PanelResourcesLoad = async () => {
     const panel = qs('panel#PanelResources'),
-        table = panel.querySelector('table'),
-        tbody = table.querySelector('tbody'),
+        table = panel.qs('table'),
+        tbody = table.qs('tbody'),
         resources = await GetResources();
 
     panel.classList.remove('loading');
@@ -230,9 +341,9 @@ const PanelResourceLoad = async () => {
         tableOpenIssues = qs('table#openIssues'),
         tableResolvedIssues = qs('table#resolvedIssues'),
         tableLogs = qs('table#logs'),
-        tbodyOpenIssues = tableOpenIssues.querySelector('tbody'),
-        tbodyResolvedIssues = tableResolvedIssues.querySelector('tbody'),
-        tbodyLogs = tableLogs.querySelector('tbody'),
+        tbodyOpenIssues = tableOpenIssues.qs('tbody'),
+        tbodyResolvedIssues = tableResolvedIssues.qs('tbody'),
+        tbodyLogs = tableLogs.qs('tbody'),
         noOpenIssues = qs('div#noOpenIssues'),
         noResolvedIssues = qs('div#noResolvedIssues'),
         noLogs = qs('div#noLogs');
@@ -407,12 +518,24 @@ const ToggleElementHiddenState = async (e) => {
  * @param {String} passedEid Passed 'eid' variable.
  */
 const TogglePanel = async (e, passedId, passedEid) => {
+    let el;
+
     if (e) {
         e.preventDefault();
+
+        el = e.target;
+
+        while(true) {
+            if (el.tagName.toLowerCase() === 'a') {
+                break;
+            }
+    
+            el = el.parentElement;
+        }
     }
 
-    let id = e?.target?.getAttribute('data-dom-id'),
-        eid = e?.target?.getAttribute('data-entity-id');
+    let id = el?.getAttribute('data-dom-id'),
+        eid = el?.getAttribute('data-entity-id');
 
     if (passedId) {
         id = passedId;
@@ -462,6 +585,7 @@ const TogglePanel = async (e, passedId, passedEid) => {
     // Make functions globally accessable.
     window['BrowserHistoryAdd'] = BrowserHistoryAdd;
     window['MenuSignOut'] = MenuSignOut;
+    window['PanelIssuesLoad'] = PanelIssuesLoad;
     window['PanelResourcesLoad'] = PanelResourcesLoad;
     window['PanelResourceLoad'] = PanelResourceLoad;
     window['TogglePanel'] = TogglePanel;
@@ -486,6 +610,9 @@ const TogglePanel = async (e, passedId, passedEid) => {
 
     // Setup pop-state.
     window.onpopstate = BrowserHistoryOnPopState;
+
+    // Get stats and populate stuff.
+    await GetStatsAndPopulate();
 
     // Open the correct panel based on the URL when the document was loaded.
     await OpenPanelBasedOnUrl();

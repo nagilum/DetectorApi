@@ -6,7 +6,11 @@
  * @returns {Array} List of alerts.
  */
 const GetAlerts = async (id) => {
-    const res = await fetch(`/api/alert?resourceId=${id}`);
+    const url = id
+        ? `/api/alert?resourceId=${id}`
+        : '/api/alert';
+
+    const res = await fetch(url);
 
     return res?.status === 200
         ? await res.json()
@@ -19,7 +23,11 @@ const GetAlerts = async (id) => {
  * @returns {Array} List of issues.
  */
 const GetIssues = async (id) => {
-    const res = await fetch(`/api/issue?resourceId=${id}`);
+    const url = id
+        ? `/api/issue?resourceId=${id}`
+        : '/api/issue';
+
+    const res = await fetch(url);
 
     return res?.status === 200
         ? await res.json()
@@ -70,6 +78,18 @@ const GetResource = async (id) => {
  */
 const GetSettings = async () => {
     const res = await fetch('/api/settings');
+
+    return res?.status === 200
+        ? await res.json()
+        : {};
+};
+
+/**
+ * Get stats from API.
+ * @returns {Object} Stats values.
+ */
+const GetStats = async () => {
+    const res = await fetch('/api/stats');
 
     return res?.status === 200
         ? await res.json()

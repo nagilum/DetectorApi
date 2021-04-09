@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using DetectorApi.Core;
+﻿using DetectorApi.Core;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DetectorApi.Controllers
 {
@@ -14,6 +14,7 @@ namespace DetectorApi.Controllers
         [HttpGet]
         public ActionResult GetSettings()
         {
+            // Build API response.
             return this.Ok(new
             {
                 auth = new

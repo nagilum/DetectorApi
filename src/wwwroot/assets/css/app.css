@@ -52,7 +52,11 @@ body {
       margin: 0;
       padding: 15px 0 0 20px; }
       body header h1 span {
-        font-weight: normal; }
+        clear: both;
+        display: block;
+        font-size: 10px;
+        font-weight: normal;
+        margin-top: -5px; }
     body header ul {
       float: left;
       list-style: none;
@@ -69,7 +73,19 @@ body {
           transition: .25s; }
           body header ul li a:hover {
             color: #fff;
-            text-decoration: underline; }
+            text-decoration: none; }
+            body header ul li a:hover span.count.alert {
+              color: #f00; }
+          body header ul li a span {
+            display: inline-block; }
+            body header ul li a span.count {
+              background-color: #1f2227;
+              border-radius: 5px;
+              margin-left: 5px;
+              padding: 0 10px;
+              text-align: center; }
+              body header ul li a span.count.alert {
+                color: #c93c37; }
     body header div {
       float: right;
       height: 50px;

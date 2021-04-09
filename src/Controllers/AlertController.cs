@@ -1,5 +1,6 @@
 ﻿using DetectorApi.Attributes;
 using DetectorApi.Database;
+using DetectorApi.Database.Tables;
 using DetectorApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,31 +22,34 @@ namespace DetectorApi.Controllers
         [VerifyAuthorization]
         public async Task<ActionResult> GetAll([FromQuery] string resourceId = null)
         {
-            if (resourceId == null)
-            {
-                return this.BadRequest(new
-                {
-                    message = "The query-parameter 'resourceId' is required"
-                });
-            }
-
             try
             {
                 await using var db = new DatabaseContext();
 
-                var resource = await db.Resources
-                    .FirstOrDefaultAsync(n => !n.Deleted.HasValue &&
-                                              n.Identifier == resourceId);
+                Resource resource = null;
 
-                if (resource == null)
+                if (resourceId != null)
                 {
-                    throw new NotFoundResponseException();
+                    resource = await db.Resources
+                        .FirstOrDefaultAsync(n => !n.Deleted.HasValue &&
+                                                  n.Identifier == resourceId);
+
+                    if (resource == null)
+                    {
+                        throw new NotFoundResponseException();
+                    }
                 }
 
-                var alerts = await db.Alerts
-                    .Where(n => n.ResourceId == resource.Id)
+                var query = db.Alerts
                     .OrderByDescending(n => n.Created)
-                    .ToListAsync();
+                    .AsQueryable();
+
+                if (resource != null)
+                {
+                    query = query.Where(n => n.ResourceId == resource.Id);
+                }
+
+                var alerts = await query.ToListAsync();
 
                 return this.Ok(alerts);
             }
