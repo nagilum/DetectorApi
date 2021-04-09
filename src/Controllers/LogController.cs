@@ -48,13 +48,7 @@ namespace DetectorApi.Controllers
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
 
-                var users = await db.Users.ToListAsync();
-
-                var list = logs
-                    .Select(n => n.CreateApiOutput(users))
-                    .ToList();
-
-                return this.Ok(list);
+                return this.Ok(logs);
             }
             catch (NotFoundResponseException)
             {

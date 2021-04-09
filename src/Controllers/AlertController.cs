@@ -47,11 +47,7 @@ namespace DetectorApi.Controllers
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
 
-                var list = alerts
-                    .Select(n => n.CreateApiOutput())
-                    .ToList();
-
-                return this.Ok(list);
+                return this.Ok(alerts);
             }
             catch (NotFoundResponseException)
             {

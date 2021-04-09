@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DetectorApi.Attributes;
-using DetectorApi.Database;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DetectorApi.Attributes;
 using DetectorApi.Core;
+using DetectorApi.Database;
 using DetectorApi.Database.Tables;
 using DetectorApi.Exceptions;
 using DetectorApi.Payloads;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DetectorApi.Controllers
 {
@@ -81,7 +81,7 @@ namespace DetectorApi.Controllers
                     "resource",
                     entry.Id);
 
-                return this.Ok(entry.CreateApiOutput());
+                return this.Ok(entry);
             }
             catch (BadRequestResponseException ex)
             {
@@ -162,11 +162,7 @@ namespace DetectorApi.Controllers
                     .OrderBy(n => n.Name)
                     .ToListAsync();
 
-                var list = resources
-                    .Select(n => n.CreateApiOutput())
-                    .ToList();
-
-                return this.Ok(list);
+                return this.Ok(resources);
             }
             catch
             {
@@ -196,7 +192,7 @@ namespace DetectorApi.Controllers
                     throw new NotFoundResponseException();
                 }
 
-                return this.Ok(resource.CreateApiOutput());
+                return this.Ok(resource);
             }
             catch (NotFoundResponseException)
             {

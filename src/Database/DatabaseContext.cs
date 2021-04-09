@@ -19,11 +19,11 @@ namespace DetectorApi.Database
 
         public DbSet<Alert> Alerts { get; set; }
 
+        public DbSet<Issue> Issues { get; set; }
+
         public DbSet<Log> Logs { get; set; }
 
         public DbSet<Resource> Resources { get; set; }
-
-        public DbSet<ScanResult> ScanResults { get; set; }
 
         public DbSet<User> Users { get; set; }
 

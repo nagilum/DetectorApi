@@ -1,29 +1,32 @@
 ﻿using DetectorApi.Attributes;
 using DetectorApi.Database;
+using DetectorApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using DetectorApi.Exceptions;
 
 namespace DetectorApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultController : ControllerBase
+    public class IssueController : ControllerBase
     {
         /// <summary>
-        /// Get a list of all scan results.
+        /// Get a list of all issue.
         /// </summary>
         /// <param name="resourceId">Resource to filter by.</param>
-        /// <returns>List of scan results.</returns>
+        /// <returns>List of issues.</returns>
         [HttpGet]
         [VerifyAuthorization]
-        public async Task<ActionResult> GetAll([FromQuery] string resourceId = null)
+        public async Task<ActionResult> GetAll([FromQuery] string resourceId)
         {
             if (resourceId == null)
             {
-                throw new BadRequestResponseException("The query-parameter 'resourceId' is required");
+                return this.BadRequest(new
+                {
+                    message = "The query-parameter 'resourceId' is required"
+                });
             }
 
             try
@@ -39,23 +42,12 @@ namespace DetectorApi.Controllers
                     throw new NotFoundResponseException();
                 }
 
-                var results = await db.ScanResults
+                var issues = await db.Issues
                     .Where(n => n.ResourceId == resource.Id)
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
 
-                var list = results
-                    .Select(n => n.CreateApiOutput())
-                    .ToList();
-
-                return this.Ok(list);
-            }
-            catch (BadRequestResponseException ex)
-            {
-                return this.BadRequest(new
-                {
-                    message = ex.Message
-                });
+                return this.Ok(issues);
             }
             catch (NotFoundResponseException)
             {

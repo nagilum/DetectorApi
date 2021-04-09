@@ -46,28 +46,6 @@ namespace DetectorApi.Database.Tables
 
         #endregion
 
-        #region Instance functions
-
-        /// <summary>
-        /// Create object for API output.
-        /// </summary>
-        /// <returns>Object.</returns>
-        public object CreateApiOutput()
-        {
-            return new
-            {
-                id = this.Identifier,
-                status = this.Status,
-                name = this.Name,
-                url = this.Url,
-                created = this.Created,
-                lastScan = this.LastScan,
-                nextScan = this.NextScan
-            };
-        }
-
-        #endregion
-
         #region Overrides
 
         /// <summary>

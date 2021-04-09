@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DetectorApi.Database.Tables
 {
-    [Table("Alerts")]
-    public class Alert
+    [Table("Issues")]
+    public class Issue
     {
         #region ORM
 
@@ -20,22 +20,31 @@ namespace DetectorApi.Database.Tables
         public DateTimeOffset Updated { get; set; }
 
         [Column]
+        public DateTimeOffset? Resolved { get; set; }
+
+        [Column]
         public long ResourceId { get; set; }
-
-        [Column]
-        public long IssueId { get; set; }
-
-        [Column]
-        [MaxLength(16)]
-        public string Type { get; set; }
 
         [Column]
         [MaxLength(1024)]
         public string Url { get; set; }
 
         [Column]
-        [MaxLength(1024)]
         public string Message { get; set; }
+
+        [Column]
+        [MaxLength(32)]
+        public string SslErrorCode { get; set; }
+
+        [Column]
+        [MaxLength(128)]
+        public string SslErrorMessage { get; set; }
+
+        [Column]
+        public int? HttpStatusCode { get; set; }
+
+        [Column]
+        public string ConnectingIp { get; set; }
 
         #endregion
     }

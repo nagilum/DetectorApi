@@ -38,33 +38,6 @@ namespace DetectorApi.Database.Tables
 
         #endregion
 
-        #region Instance functions
-
-        /// <summary>
-        /// Create object for API output.
-        /// </summary>
-        /// <returns>Object.</returns>
-        public object CreateApiOutput(List<User> users = null)
-        {
-            users ??= new DatabaseContext().Users.ToList();
-
-            var user = this.UserId.HasValue
-                ? users.FirstOrDefault(n => n.Id == this.UserId.Value)
-                : null;
-            
-            return new
-            {
-                created = this.Created,
-                message = this.Message,
-                type = this.Type,
-                referenceType = this.ReferenceType,
-                referenceId = this.ReferenceId,
-                user = user?.Name
-            };
-        }
-
-        #endregion
-
         #region Database handler
 
         /// <summary>
