@@ -13,10 +13,11 @@
 
             <ul>
                 <li><a href="/#resources" data-on-click="TogglePanel" data-dom-id="PanelResources" data-type="resources">Resources</a></li>
+                <li><a href="/#issues" data-on-click="TogglePanel" data-dom-id="PanelIssues" data-type="issues">Issues</a></li>
             </ul>
 
             <div>
-                <a data-on-click="ToggleElementHiddenState" data-dom-id="UserMenu"></a>
+                <a data-on-click="ToggleElementHiddenState" data-dom-id="MenuUser"></a>
             </div>
         </header>
 
@@ -85,73 +86,63 @@
                     <input type="text" id="TextBoxEditResourceNextScan" readonly class="readonly">
                 </div>
 
-                <h2>Issues</h2>
+                <h2>Open Issues</h2>
 
-                <table id="issues">
+                <table id="openIssues">
                     <thead>
                         <tr>
-                            <th>Status</th>
-                            <th>Started</th>
-                            <th>Last Updated</th>
-                            <th>Error</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-
-                <h2>Scans</h2>
-
-                <table id="scanResults">
-                    <thead>
-                        <tr>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th>StatusCode</th>
-                            <th>SSL Error</th>
-                            <th>Connecting IP</th>
-                            <th>General Error</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-
-                <h2>Alerts</h2>
-
-                <table id="alerts">
-                    <thead>
-                        <tr>
-                            <th>Created</th>
-                            <th>Type</th>
-                            <th>Url</th>
+                            <th style="width: 300px;">Created</th>
+                            <th style="width: 300px;">Updated</th>
+                            <th style="width: 100px;">Alerts</th>
                             <th>Message</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+
+                <div id="noOpenIssues">
+                    No open issues!
+                </div>
+
+                <h2>Resolved Issues</h2>
+
+                <table id="resolvedIssues">
+                    <thead>
+                        <tr>
+                            <th style="width: 300px;">Created</th>
+                            <th style="width: 300px;">Resolved</th>
+                            <th style="width: 100px;">Alerts</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div id="noResolvedIssues">
+                    No resolved issues!
+                </div>
 
                 <h2>Logs</h2>
 
                 <table id="logs">
                     <thead>
                         <tr>
-                            <th>Created</th>
+                            <th style="width: 300px;">Created</th>
+                            <th style="width: 300px;">User</th>
+                            <th style="width: 100px;">Type</th>
                             <th>Message</th>
-                            <th>Type</th>
-                            <th>User</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
 
-                <!--
-                    Change Log
-                        - Resource Created: [name] [url] [user]
-                        - Resource Updated: [name] [url] [user]
-                        - Resource Deleted: [user]
-                        - Error: [type] [message]
-                -->
+                <div id="noLogs">
+                    No logs!
+                </div>
             </form>
         </panel>
+
+        <panel id="PanelIssues" class="hidden" data-fn-on-show="PanelIssuesLoad"></panel>
         
         <script src="/assets/js/shorthand.js?v1.0"></script>
         <script src="/assets/js/api.js?v1.0"></script>

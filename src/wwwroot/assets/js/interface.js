@@ -113,8 +113,13 @@ const OpenPanelBasedOnUrl = async () => {
     }
 
     // Load single resource?
-    if (parts.length === 2 && parts[0] === 'resource') {
+    else if (parts.length === 2 && parts[0] === 'resource') {
         await TogglePanel(null, 'PanelResource', parts[1]);
+    }
+
+    // Load issues?
+    else if (parts.length === 1 && parts[0] === 'issues') {
+        await TogglePanel(null, 'PanelIssues');
     }
 
     // Something else?
@@ -153,10 +158,10 @@ const PanelResourcesLoad = async () => {
         // Id
         const aid = ce('a');
 
-        aid.innerText = resource.id;
-        aid.setAttribute('href', `/#resource/${resource.id}`);
+        aid.innerText = resource.identifier;
+        aid.setAttribute('href', `/#resource/${resource.identifier}`);
         aid.setAttribute('data-dom-id', 'PanelResource');
-        aid.setAttribute('data-entity-id', resource.id);
+        aid.setAttribute('data-entity-id', resource.identifier);
         aid.setAttribute('data-type', 'resource');
         aid.addEventListener('click', BrowserHistoryAdd);
         aid.addEventListener('click', TogglePanel);
@@ -167,9 +172,9 @@ const PanelResourcesLoad = async () => {
         const aname = ce('a');
 
         aname.innerText = resource.name;
-        aname.setAttribute('href', `/#resource/${resource.id}`);
+        aname.setAttribute('href', `/#resource/${resource.identifier}`);
         aname.setAttribute('data-dom-id', 'PanelResource');
-        aname.setAttribute('data-entity-id', resource.id);
+        aname.setAttribute('data-entity-id', resource.identifier);
         aname.setAttribute('data-type', 'resource');
         aname.addEventListener('click', BrowserHistoryAdd);
         aname.addEventListener('click', TogglePanel);
@@ -177,7 +182,13 @@ const PanelResourcesLoad = async () => {
         tdName.appendChild(aname);
 
         // Url
-        tdUrl.innerText = resource.url;
+        const aurl = ce('a');
+
+        aurl.innerText = resource.url;
+        aurl.setAttribute('href', resource.url);
+        aurl.setAttribute('target', '_blank');
+
+        tdUrl.appendChild(aurl);
 
         // Last Scan
         tdLastScan.innerText = resource.lastScan;
@@ -203,7 +214,7 @@ const PanelResourceLoad = async () => {
     const panel = qs('panel#PanelResource'),
         eid = panel.getAttribute('data-entity-id'),
         resource = await GetResource(eid),
-        results = await GetResults(eid),
+        issues = await GetIssues(eid),
         alerts = await GetAlerts(eid),
         logs = await GetLogs(eid);
 
@@ -216,17 +227,18 @@ const PanelResourceLoad = async () => {
         tbCreated = qs('input#TextBoxEditResourceCreated'),
         tbLastScan = qs('input#TextBoxEditResourceLastScan'),
         tbNextScan = qs('input#TextBoxEditResourceNextScan'),
-        tableIssues = panel.querySelector('table#issues'),
-        tableScanResults = panel.querySelector('table#scanResults'),
-        tableAlerts = panel.querySelector('table#alerts'),
-        tableLogs = panel.querySelector('table#logs'),
-        tbodyIssues = tableIssues.querySelector('tbody'),
-        tbodyScanResults = tableScanResults.querySelector('tbody'),
-        tbodyAlerts = tableAlerts.querySelector('tbody'),
-        tbodyLogs = tableLogs.querySelector('tbody');
+        tableOpenIssues = qs('table#openIssues'),
+        tableResolvedIssues = qs('table#resolvedIssues'),
+        tableLogs = qs('table#logs'),
+        tbodyOpenIssues = tableOpenIssues.querySelector('tbody'),
+        tbodyResolvedIssues = tableResolvedIssues.querySelector('tbody'),
+        tbodyLogs = tableLogs.querySelector('tbody'),
+        noOpenIssues = qs('div#noOpenIssues'),
+        noResolvedIssues = qs('div#noResolvedIssues'),
+        noLogs = qs('div#noLogs');
 
     // Id
-    tbId.value = resource.id;
+    tbId.value = resource.identifier;
 
     // Status
     tbStatus.value = resource.status;
@@ -250,163 +262,128 @@ const PanelResourceLoad = async () => {
     tbNextScan.value = resource.nextScan;
 
     // Clear tables.
-    tbodyScanResults.innerHTML = '';
-    tbodyAlerts.innerHTML = '';
+    tbodyOpenIssues.innerHTML = '';
+    tbodyResolvedIssues.innerHTML = '';
+    tbodyLogs.innerHTML = '';
 
-    // Add issues.
-    resource.issues.forEach(result => {
-        const tr = ce('tr'),
-            tdStatus = ce('td'),
-            tdStarted = ce('td'),
-            tdLastUpdated = ce('td'),
-            tdError = ce('td');
+    // Add open issues.
+    const openIssues = issues.filter(n => !n.resolved);
 
-        // Status
-
-        // Started
-
-        // Last Updated
-
-        // Error
-
-        // Done
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdStarted);
-        tr.appendChild(tdLastUpdated);
-        tr.appendChild(tdError);
-        tbodyIssues.appendChild(tr);
-    });
-
-    // Add each scan result.
-    results.forEach(result => {
+    openIssues.filter(n => !n.resolved).forEach(issue => {
         const tr = ce('tr'),
             tdCreated = ce('td'),
             tdUpdated = ce('td'),
-            tdStatusCode = ce('td'),
-            tdSslError = ce('td'),
-            tdConnectingIp = ce('td'),
-            tdGeneralError = ce('td');
+            tdAlerts = ce('td'),
+            tdMessage = ce('td');
+        
+        // Created.
+        tdCreated.innerText = issue.created;
 
-        let cls;
+        // Updated.
+        tdUpdated.innerText = issue.updated;
 
-        // Created
-        tdCreated.innerText = result.created;
+        // Alerts.
+        tdAlerts.innerText = alerts.filter(n => n.issueId === issue.id).length;
 
-        // Updated
-        tdUpdated.innerText = result.updated;
+        // Message.
+        tdMessage.innerText = issue.message;
 
-        // StatusCode
-        if (result.statusCode >= 200 && result.statusCode < 300) {
-            cls = 'ok';
-        }
-        else if (result.statusCode >= 300 && result.statusCode < 400) {
-            cls = 'warning';
-        }
-        else if (result.statusCode >= 400) {
-            cls = 'error';
-        }
-
-        tdStatusCode.innerText = result.statusCode;
-        tdStatusCode.classList.add('status-text');
-        tdStatusCode.classList.add(cls);
-
-        // SSL Error
-        tdSslError.innerText = result.sslErrorCode
-            ? `${result.sslErrorCode}: ${result.sslErrorMessage}`
-            : '';
-
-        if (result.sslErrorCode) {
-            tdSslError.classList.add('status-text');
-            tdSslError.classList.add('error');
-        }
-
-        // Connecting IP
-        tdConnectingIp.innerText = result.connectingIp;
-
-        // General Error
-        tdGeneralError.innerText = result.exceptionMessage;
-
-        if (result.exceptionMessage) {
-            tdGeneralError.classList.add('status-text');
-            tdGeneralError.classList.add('error');
-        }
-
-        // Done
+        // Add to table.
         tr.appendChild(tdCreated);
         tr.appendChild(tdUpdated);
-        tr.appendChild(tdStatusCode);
-        tr.appendChild(tdSslError);
-        tr.appendChild(tdConnectingIp);
-        tr.appendChild(tdGeneralError);
-        tbodyScanResults.appendChild(tr);
+        tr.appendChild(tdAlerts);
+        tr.appendChild(tdMessage);
+        tbodyOpenIssues.appendChild(tr);
     });
 
-    // Add each alert.
-    alerts.forEach(alert => {
+    // No issues?
+    if (openIssues.length > 0) {
+        tableOpenIssues.classList.remove('hidden');
+        noOpenIssues.classList.add('hidden');
+    }
+    else {
+        tableOpenIssues.classList.add('hidden');
+        noOpenIssues.classList.remove('hidden');
+    }
+
+    // Add resolved issues.
+    const resolvedIssues = issues.filter(n => n.resolved);
+
+    resolvedIssues.filter(n => n.resolved).forEach(issue => {
         const tr = ce('tr'),
             tdCreated = ce('td'),
-            tdType = ce('td'),
-            tdUrl = ce('td'),
+            tdResolved = ce('td'),
+            tdAlerts = ce('td'),
             tdMessage = ce('td');
+        
+        // Created.
+        tdCreated.innerText = issue.created;
 
-        // Created
-        tdCreated.innerText = alert.created;
+        // Updated.
+        tdResolved.innerText = issue.updated;
 
-        // Type
-        tdType.innerText = alert.type;
+        // Alerts.
+        tdAlerts.innerText = alerts.filter(n => n.issueId === issue.id).length;
 
-        // Url
-        tdUrl.innerText = alert.url;
+        // Message.
+        tdMessage.innerText = issue.message;
 
-        // Message
-        tdMessage.innerText = alert.message;
-
-        // Done
+        // Add to table.
         tr.appendChild(tdCreated);
-        tr.appendChild(tdType);
-        tr.appendChild(tdUrl);
+        tr.appendChild(tdResolved);
+        tr.appendChild(tdAlerts);
         tr.appendChild(tdMessage);
-        tbodyAlerts.appendChild(tr);
+        tbodyResolvedIssues.appendChild(tr);
     });
+
+    // No issues?
+    if (resolvedIssues.length > 0) {
+        tableResolvedIssues.classList.remove('hidden');
+        noResolvedIssues.classList.add('hidden');
+    }
+    else {
+        tableResolvedIssues.classList.add('hidden');
+        noResolvedIssues.classList.remove('hidden');
+    }
 
     // Add logs.
     logs.forEach(log => {
         const tr = ce('tr'),
             tdCreated = ce('td'),
-            tdMessage = ce('td'),
+            tdUser = ce('td'),
             tdType = ce('td'),
-            tdUser = ce('td');
+            tdMessage = ce('td');
 
-        // Created
+        // Created.
         tdCreated.innerText = log.created;
 
-        // Message
+        // User.
+
+        // Type.
+        tdType.innerText = log.type;
+        tdType.classList.add('status-text');
+        tdType.classList.add(log.type);
+
+        // Message.
         tdMessage.innerText = log.message;
 
-        // Type
-        tdType.innerText = log.type;
-        tdType.classList.add('status');
-
-        switch (log.type) {
-            case 'critical':
-                tdType.classList.add('error');
-                break;
-
-            case 'warning':
-                tdType.classList.add('warning');
-                break;
-        }
-
-        // User
-        tdUser.innerText = log.user;
-
-        // Done
+        // Add to table.
         tr.appendChild(tdCreated);
-        tr.appendChild(tdMessage);
-        tr.appendChild(tdType);
         tr.appendChild(tdUser);
+        tr.appendChild(tdType);
+        tr.appendChild(tdMessage);
         tbodyLogs.appendChild(tr);
     });
+
+    // No logs?
+    if (logs.length > 0) {
+        tableLogs.classList.remove('hidden');
+        noLogs.classList.add('hidden');
+    }
+    else {
+        tableLogs.classList.add('hidden');
+        noLogs.classList.remove('hidden');
+    }
 };
 
 /**
@@ -463,7 +440,7 @@ const TogglePanel = async (e, passedId, passedEid) => {
 
         const fn = panel.getAttribute('data-fn-on-show');
 
-        if (!fn || !window[fn]) {
+        if (!fn) {
             return;
         }
 

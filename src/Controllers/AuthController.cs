@@ -128,7 +128,8 @@ namespace DetectorApi.Controllers
                         Secure = true,
                         HttpOnly = true,
                         Expires = DateTimeOffset.Now.AddDays(3),
-                        Path = "/"
+                        Path = "/",
+                        SameSite = SameSiteMode.Strict
                     });
 
                 return this.Ok();

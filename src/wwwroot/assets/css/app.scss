@@ -292,8 +292,10 @@ body {
                             color: #adbac7;
                             cursor: pointer;
                             text-decoration: none;
+                            transition: .25s;
 
                             &:hover {
+                                color: #fff;
                                 text-decoration: underline;
                             }
                         }
@@ -317,10 +319,12 @@ body {
                         }
 
                         &.status-text {
+                            &.info,
                             &.ok {
                                 color: #347d39;
                             }
         
+                            &.critical,
                             &.error {
                                 color: #c93c37;
                             }

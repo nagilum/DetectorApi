@@ -11,7 +11,20 @@ const GetAlerts = async (id) => {
     return res?.status === 200
         ? await res.json()
         : [];
-}
+};
+
+/**
+ * Get issues from API.
+ * @param {String} id Resource id.
+ * @returns {Array} List of issues.
+ */
+const GetIssues = async (id) => {
+    const res = await fetch(`/api/issue?resourceId=${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+};
 
 /**
  * Get logs from API.
@@ -24,7 +37,7 @@ const GetLogs = async (id) => {
     return res?.status === 200
         ? await res.json()
         : [];
-}
+};
 
 /**
  * Get resources from API.
@@ -36,7 +49,7 @@ const GetResources = async () => {
     return res?.status === 200
         ? await res.json()
         : [];
-}
+};
 
 /**
  * Get resource from API.
@@ -49,20 +62,7 @@ const GetResource = async (id) => {
     return res?.status === 200
         ? await res.json()
         : {};
-}
-
-/**
- * Get results from API.
- * @param {String} id Resource id.
- * @returns {Array} List of results.
- */
-const GetResults = async (id) => {
-    const res = await fetch(`/api/result?resourceId=${id}`);
-
-    return res?.status === 200
-        ? await res.json()
-        : [];
-}
+};
 
 /**
  * Get settings from API.
