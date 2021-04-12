@@ -153,6 +153,12 @@ body {
       display: block;
       margin: 0;
       padding: 0; }
+      body panel toolbar a {
+        color: #adbac7;
+        text-decoration: none; }
+        body panel toolbar a:hover {
+          color: #fff;
+          text-decoration: none; }
     body panel form {
       margin: 50px 0 0 0;
       padding: 0; }
@@ -241,7 +247,9 @@ body {
               color: #aec937; }
           body panel table tbody tr:hover td {
             background-color: #2d333b; }
-            body panel table tbody tr:hover td.status.error {
-              background-color: #e5534b; }
-            body panel table tbody tr:hover td.status.ok {
-              background-color: #46954a; }
+            body panel table tbody tr:hover td.status {
+              color: #fff; }
+              body panel table tbody tr:hover td.status.error {
+                background-color: #e5534b; }
+              body panel table tbody tr:hover td.status.ok {
+                background-color: #46954a; }

@@ -1,6 +1,43 @@
 "use strict";
 
 /**
+ * Create a new resource.
+ * @param {String} name Name of the resource.
+ * @param {String} url URL of the resource.
+ * @returns {Object} Created resource.
+ */
+const CreateResource = async (name, url) => {
+    const res = await fetch(
+        '/api/resource',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                url
+            })
+        });
+
+    return res?.status === 200
+        ? await res.json()
+        : {};
+};
+
+/**
+ * Delete a resource from the API.
+ * @param {String} id Resource ID.
+ */
+const DeleteResource = async (id) => {
+    await fetch(
+        `/api/resource/${id}`,
+        {
+            method: 'DELETE'
+        });
+};
+
+/**
  * Get alerts from API.
  * @param {String} id Resource id.
  * @returns {Array} List of alerts.
@@ -106,6 +143,27 @@ const GetUser = async () => {
     return res?.status === 200
         ? await res.json()
         : null;
+};
+
+/**
+ * Update an existing resource.
+ * @param {String} id Resource ID.
+ * @param {String} name Name for resoruce.
+ * @param {String} url URL for resource.
+ */
+const UpdateResource = async (id, name, url) => {
+    await fetch(
+        `/api/resource/${id}`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                url
+            })
+        });
 };
 
 /**

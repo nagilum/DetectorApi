@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Detector</title>
         <link rel="stylesheet" href="/assets/css/app.css?v=1.0">
-        <link rel="icon" href="/assets/img/box.svg?v=1.0">
+        <link rel="icon" href="/assets/img/network.svg?v=1.0">
     </head>
     <body>
         <header class="hidden">
@@ -42,7 +42,7 @@
 
         <panel id="PanelResources" class="hidden" data-fn-on-show="PanelResourcesLoad" data-title="Resources">
             <toolbar>
-                <a data-on-click="PanelOpenAddResourcePopup" class="button">Add Resource</a>
+                <a href="/#resource/new" data-on-click="TogglePanel" data-dom-id="PanelResourceNew" class="button">Add Resource</a>
             </toolbar>
 
             <h2>Resources</h2>
@@ -64,9 +64,8 @@
 
         <panel id="PanelResource" class="hidden" data-fn-on-show="PanelResourceLoad">
             <toolbar>
-                <a data-on-click="TogglePanel" data-dom-id="PanelResources" class="button neutral">Back</a>
-                <a data-on-click="PanelSaveResource" class="button">Save</a>
-                <a data-on-click="PanelDeleteResource" class="button danger">Delete</a>
+                <a data-on-click="PanelResourceSave" class="button">Save</a>
+                <a data-on-click="PanelResourceDelete" class="button danger">Delete</a>
             </toolbar>
 
             <form>
@@ -151,6 +150,23 @@
 
                 <div id="noLogs">
                     No logs!
+                </div>
+            </form>
+        </panel>
+
+        <panel id="PanelResourceNew" class="hidden" data-title="New Resource">
+            <toolbar>
+                <a data-on-click="PanelResourceCreateNew" class="button">Save</a>
+            </toolbar>
+
+            <form>
+                <div class="form-item">
+                    <label for="TextBoxNewResourceName">Name</label>
+                    <input type="text" id="TextBoxNewResourceName">
+                </div>
+                <div class="form-item">
+                    <label for="TextBoxNewResourceUrl">URL</label>
+                    <input type="text" id="TextBoxNewResourceUrl">
                 </div>
             </form>
         </panel>

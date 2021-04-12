@@ -220,6 +220,16 @@ body {
             display: block;
             margin: 0;
             padding: 0;
+
+            a {
+                color: #adbac7;
+                text-decoration: none;
+
+                &:hover {
+                    color: #fff;
+                    text-decoration: none;
+                }
+            }
         }
 
         form {
@@ -368,6 +378,8 @@ body {
                             background-color: #2d333b;
 
                             &.status {
+                                color: #fff;
+
                                 &.error {
                                     background-color: #e5534b;
                                 }

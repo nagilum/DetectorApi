@@ -157,6 +157,11 @@ const OpenPanelBasedOnUrl = async () => {
         await TogglePanel(null, 'PanelResources');
     }
 
+    // New resource?
+    else if (parts.length === 2 && parts[0] === 'resource' && parts[1] === 'new') {
+        await TogglePanel(null, 'PanelResourceNew');
+    }
+
     // Load single resource?
     else if (parts.length === 2 && parts[0] === 'resource') {
         await TogglePanel(null, 'PanelResource', parts[1]);
@@ -262,9 +267,15 @@ const PanelResourcesLoad = async () => {
             tdNextScan = ce('td');
 
         // Status
-        tdStatus.innerText = resource.status;
-        tdStatus.classList.add('status');
-        tdStatus.classList.add(resource.status.toLowerCase());
+        if (!resource.status) {
+            tdStatus.innerText = 'Not Scanned';
+            tdStatus.classList.add('status');
+        }
+        else {
+            tdStatus.innerText = resource.status;
+            tdStatus.classList.add('status');
+            tdStatus.classList.add(resource.status.toLowerCase());
+        }        
 
         // Id
         const aid = ce('a');
@@ -319,6 +330,74 @@ const PanelResourcesLoad = async () => {
 };
 
 /**
+ * Create a new resource.
+ */
+const PanelResourceCreateNew = async () => {
+    const panel = qs('panel#PanelResourceNew'),
+        name = panel.qs('input#TextBoxNewResourceName').value,
+        url = panel.qs('input#TextBoxNewResourceUrl').value;
+    
+    if (!name) {
+        alert('Name is required!');
+        return;
+    }
+
+    if (!url) {
+        alert('URL is required!');
+        return;
+    }
+
+    const resource = await CreateResource(name, url);
+
+    if (!resource) {
+        alert('Unhandled error. Check browser console for details.');
+        return;
+    }
+
+    await TogglePanel(null, 'PanelResource', resource.identifier);
+    await GetStatsAndPopulate();
+};
+
+/**
+ * Delete a resource.
+ */
+const PanelResourceDelete = async () => {
+    const res = confirm('Are you sure?');
+
+    if (!res) {
+        return;
+    }
+
+    const panel = qs('panel#PanelResource'),
+        id = panel.getAttribute('data-entity-id');
+
+    await DeleteResource(id);
+    await TogglePanel(null, 'PanelResources');
+};
+
+/**
+ * Update an existing resource.
+ */
+const PanelResourceSave = async () => {
+    const panel = qs('panel#PanelResource'),
+        id = panel.getAttribute('data-entity-id'),
+        name = panel.qs('input#TextBoxEditResourceName').value,
+        url = panel.qs('input#TextBoxEditResourceUrl').value;
+    
+    if (!name) {
+        alert('Name is required!');
+        return;
+    }
+
+    if (!url) {
+        alert('URL is required!');
+        return;
+    }
+
+    await UpdateResource(id, name, url);
+};
+
+/**
  * Load and display a single resource.
  */
 const PanelResourceLoad = async () => {
@@ -352,9 +431,15 @@ const PanelResourceLoad = async () => {
     tbId.value = resource.identifier;
 
     // Status
-    tbStatus.value = resource.status;
-    tbStatus.classList = 'readonly';
-    tbStatus.classList.add(resource.status.toLowerCase());
+    if (!resource.status) {
+        tbStatus.value = 'Not Scanned';
+        tbStatus.classList = 'readonly';
+    }
+    else {
+        tbStatus.value = resource.status;
+        tbStatus.classList = 'readonly';
+        tbStatus.classList.add(resource.status.toLowerCase());
+    }    
 
     // Name
     tbName.value = resource.name;
@@ -588,6 +673,9 @@ const TogglePanel = async (e, passedId, passedEid) => {
     window['PanelIssuesLoad'] = PanelIssuesLoad;
     window['PanelResourcesLoad'] = PanelResourcesLoad;
     window['PanelResourceLoad'] = PanelResourceLoad;
+    window['PanelResourceCreateNew'] = PanelResourceCreateNew;
+    window['PanelResourceSave'] = PanelResourceSave;
+    window['PanelResourceDelete'] = PanelResourceDelete;
     window['TogglePanel'] = TogglePanel;
     window['ToggleElementHiddenState'] = ToggleElementHiddenState;
 

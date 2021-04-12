@@ -126,6 +126,17 @@ namespace DetectorApi.Controllers
                 resource.Updated = DateTimeOffset.Now;
                 resource.Deleted = DateTimeOffset.Now;
 
+                var issues = await db.Issues
+                    .Where(n => n.ResourceId == resource.Id)
+                    .ToListAsync();
+
+                var alerts = await db.Alerts
+                    .Where(n => n.ResourceId == resource.Id)
+                    .ToListAsync();
+
+                db.Issues.RemoveRange(issues);
+                db.Alerts.RemoveRange(alerts);
+
                 await db.SaveChangesAsync();
 
                 await Log.LogWarning(
@@ -209,8 +220,7 @@ namespace DetectorApi.Controllers
         /// </summary>
         /// <param name="id">Id of resource.</param>
         /// <param name="payload">Resource info.</param>
-        [HttpPost]
-        [Route("{id}")]
+        [HttpPost("{id}")]
         [VerifyAuthorization]
         public async Task<ActionResult> Update([FromRoute] string id, [FromBody] ResourcePostPayload payload)
         {
