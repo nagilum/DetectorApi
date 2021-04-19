@@ -457,6 +457,61 @@ const PanelResourceLoad = async () => {
     // Next scan
     tbNextScan.value = resource.nextScan;
 
+    // Graph
+    if (resource.graphJson) {
+        try {
+            const gpl = JSON.parse(resource.graphJson),
+                ctx = qs('canvas#graph').getContext('2d'),
+                labels = [],
+                backgroundColor = [],
+                borderColor = [],
+                data = [];
+
+            gpl.forEach(gp => {
+                if (gp.st === 'Ok') {
+                    backgroundColor.push('#009900');
+                    borderColor.push('#00ff00');
+                    labels.push('');
+                }
+                else {
+                    backgroundColor.push('#990000');
+                    borderColor.push('#ff0000');
+                    labels.push(gp.dt);
+                }
+
+                data.push(gp.rt);
+            });
+
+            new Chart(
+                ctx,
+                {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Response Times (ms)',
+                                data,
+                                backgroundColor,
+                                borderColor,
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+        }
+        catch {
+            //
+        }
+    }
+
     // Clear tables.
     tbodyOpenIssues.innerHTML = '';
     tbodyResolvedIssues.innerHTML = '';
