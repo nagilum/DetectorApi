@@ -37,6 +37,9 @@ namespace DetectorApi.Database.Tables
         [MaxLength(1024)]
         public string Message { get; set; }
 
+        [Column]
+        public DateTimeOffset? PostedToSlack { get; set; }
+
         #endregion
     }
 }

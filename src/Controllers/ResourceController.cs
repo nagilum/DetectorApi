@@ -41,12 +41,12 @@ namespace DetectorApi.Controllers
 
                 await using var db = new DatabaseContext();
 
-                var entry = await db.Resources
+                var resource = await db.Resources
                     .FirstOrDefaultAsync(n => !n.Deleted.HasValue &&
                                               n.Name == payload.Name &&
                                               n.Url == payload.Url);
 
-                if (entry != null)
+                if (resource != null)
                 {
                     throw new BadRequestResponseException("A resource with the same name and URL already exists");
                 }
@@ -63,7 +63,7 @@ namespace DetectorApi.Controllers
                     id = Guid.NewGuid().ToString().Substring(0, 8);
                 }
 
-                entry = new Resource
+                resource = new Resource
                 {
                     Created = DateTimeOffset.Now,
                     Updated = DateTimeOffset.Now,
@@ -72,16 +72,16 @@ namespace DetectorApi.Controllers
                     Url = payload.Url
                 };
 
-                await db.Resources.AddAsync(entry);
+                await db.Resources.AddAsync(resource);
                 await db.SaveChangesAsync();
 
                 await Log.LogInformation(
                     "Resource created.",
                     user.Id,
                     "resource",
-                    entry.Id);
+                    resource.Id);
 
-                return this.Ok(entry);
+                return this.Ok(resource);
             }
             catch (BadRequestResponseException ex)
             {

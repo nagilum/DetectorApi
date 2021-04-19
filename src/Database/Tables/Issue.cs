@@ -30,21 +30,10 @@ namespace DetectorApi.Database.Tables
         public string Url { get; set; }
 
         [Column]
+        public string IssueType { get; set; }
+
+        [Column]
         public string Message { get; set; }
-
-        [Column]
-        [MaxLength(32)]
-        public string SslErrorCode { get; set; }
-
-        [Column]
-        [MaxLength(128)]
-        public string SslErrorMessage { get; set; }
-
-        [Column]
-        public int? HttpStatusCode { get; set; }
-
-        [Column]
-        public string ConnectingIp { get; set; }
 
         #endregion
     }
