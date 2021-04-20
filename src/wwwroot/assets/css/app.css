@@ -171,6 +171,9 @@ body {
           width: 100px; }
           body panel form div.form-item label::after {
             content: ':'; }
+          body panel form div.form-item label.no-width {
+            display: block;
+            width: auto; }
         body panel form div.form-item input {
           background-color: rgba(28, 33, 40, 0.5);
           border: solid 1px #373e47;
@@ -191,6 +194,15 @@ body {
           body panel form div.form-item input.warning {
             color: #aec937;
             font-weight: bold; }
+        body panel form div.form-item textarea {
+          background-color: rgba(28, 33, 40, 0.5);
+          border: solid 1px #373e47;
+          border-radius: 5px;
+          color: #adbac7;
+          display: inline-block;
+          height: 200px;
+          padding: 10px;
+          width: 500px; }
     body panel h2 {
       font-size: 20px;
       font-weight: normal;

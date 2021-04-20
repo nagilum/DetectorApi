@@ -43,6 +43,9 @@
         <panel id="PanelResources" class="hidden" data-fn-on-show="PanelResourcesLoad" data-title="Resources">
             <toolbar>
                 <a href="/#resource/new" data-on-click="TogglePanel" data-dom-id="PanelResourceNew" class="button">Add Resource</a>
+                <a href="/#resource/new-bulk" data-on-click="TogglePanel" data-dom-id="PanelResourceNewBulk" class="button">Bulk Add Resources</a>
+                <a data-on-click="PanelResourcesBulkDelete" class="button danger">Bulk Delete</a>
+                <a data-on-click="PanelResourcesBulkToggleActive" class="button danger">Bulk Pause/Unpause</a>
             </toolbar>
 
             <h2>Resources</h2>
@@ -50,6 +53,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th><input type="checkbox" data-on-click="ToggleResourcesCheckboxes" id="ToggleResourcesCheckboxesTrigger"></th>
                         <th>Status</th>
                         <th>Id</th>
                         <th>Name</th>
@@ -172,6 +176,19 @@
                 <div class="form-item">
                     <label for="TextBoxNewResourceUrl">URL</label>
                     <input type="text" id="TextBoxNewResourceUrl">
+                </div>
+            </form>
+        </panel>
+
+        <panel id="PanelResourceNewBulk" class="hidden" data-title="Bulk Add Resources">
+            <toolbar>
+                <a data-on-click="PanelResourcesBulkAdd" class="button">Save</a>
+            </toolbar>
+
+            <form>
+                <div class="form-item">
+                    <label for="TextBoxBulkNewResourceUrls" class="no-width">Enter one URL pr line:</label>
+                    <textarea id="TextBoxBulkNewResourceUrls"></textarea>
                 </div>
             </form>
         </panel>

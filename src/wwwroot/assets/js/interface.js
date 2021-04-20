@@ -23,6 +23,10 @@ const BrowserHistoryAdd = async (e) => {
             }
 
             while (true) {
+                if (!el || !el.tagName) {
+                    return;
+                }
+
                 if (el.tagName.toLowerCase() === 'a') {
                     break;
                 }
@@ -162,6 +166,11 @@ const OpenPanelBasedOnUrl = async () => {
         await TogglePanel(null, 'PanelResourceNew');
     }
 
+    // Bulk new resources?
+    else if (parts.length === 2 && parts[0] === 'resource' && parts[1] === 'new-bulk') {
+        await TogglePanel(null, 'PanelResourceNewBulk');
+    }
+
     // Load single resource?
     else if (parts.length === 2 && parts[0] === 'resource') {
         await TogglePanel(null, 'PanelResource', parts[1]);
@@ -259,12 +268,22 @@ const PanelResourcesLoad = async () => {
 
     resources.forEach(resource => {
         const tr = ce('tr'),
+            tdCheck = ce('td'),
             tdStatus = ce('td'),
             tdId = ce('td'),
             tdName = ce('td'),
             tdUrl = ce('td'),
             tdLastScan = ce('td'),
             tdNextScan = ce('td');
+
+        // Checkbox for bulk actions.
+        const cb = ce('input');
+
+        cb.setAttribute('type', 'checkbox');
+        cb.setAttribute('data-entity-id', resource.identifier);
+        cb.classList.add('resources-bulk-action');
+
+        tdCheck.appendChild(cb);
 
         // Status
         if (resource.active === null || resource.active === true) {
@@ -325,6 +344,7 @@ const PanelResourcesLoad = async () => {
         tdNextScan.innerText = resource.nextScan;
 
         // Done
+        tr.appendChild(tdCheck);
         tr.appendChild(tdStatus);
         tr.appendChild(tdId);
         tr.appendChild(tdName);
@@ -714,6 +734,97 @@ const PanelResourceLoad = async () => {
 };
 
 /**
+ * Add multiple resources as bulk.
+ */
+const PanelResourcesBulkAdd = async () => {
+    const panel = qs('panel#PanelResourceNewBulk'),
+        tbUrls = panel.qs('textarea'),
+        value = tbUrls.value,
+        hasR = value.indexOf("\r") > -1,
+        hasN = value.indexOf("\n") > -1;
+
+    let sep = '',
+        urls = [];
+
+    if (hasR) {
+        sep = "\r";
+    }
+    else if (hasN) {
+        sep = "\n";
+    }
+
+    if (sep === '') {
+        urls.push(value);
+    }
+    else {
+        urls = value.split(sep);
+    }
+
+    await CreateResourcesBulk(urls);
+
+    await TogglePanel(null, 'PanelResources');
+    await GetStatsAndPopulate();
+};
+
+/**
+ * Delete multiple resources in bulk.
+ */
+const PanelResourcesBulkDelete = async () => {
+    const res = confirm('Are you sure?');
+
+    if (!res) {
+        return;
+    }
+
+    const panel = qs('panel#PanelResources'),
+        cbl = panel.qsa('input.resources-bulk-action'),
+        ids = [];
+
+    cbl.forEach(cb => {
+        if (cb.checked) {
+            ids.push(cb.getAttribute('data-entity-id'));
+        }
+    });
+
+    if (ids.length === 0) {
+        return;
+    }
+
+    await DeleteResourcesBulk(ids);
+    await TogglePanel(null, 'PanelResources');
+    await GetStatsAndPopulate();
+};
+
+/**
+ * Pause/upause multiple resources in bulk.
+ */
+const PanelResourcesBulkToggleActive = async () => {
+    const res = confirm('Are you sure?');
+
+    if (!res) {
+        return;
+    }
+
+    const panel = qs('panel#PanelResources'),
+        cbl = panel.qsa('input.resources-bulk-action'),
+        ids = [];
+
+    cbl.forEach(cb => {
+        if (cb.checked) {
+            ids.push(cb.getAttribute('data-entity-id'));
+        }
+    });
+
+    if (ids.length === 0) {
+        return;
+    }
+
+    await ToggleResourcesActiveBulk(ids);
+    await TogglePanel(null, 'PanelResources');
+    await GetStatsAndPopulate();
+};
+
+/**
  * Toggle the visibility of an element.
  * @param {Event} e Click event.
  */
@@ -725,6 +836,19 @@ const ToggleElementHiddenState = async (e) => {
     const id = e.target.getAttribute('data-dom-id');
 
     qs(`#${id}`).classList.toggle('hidden');
+};
+
+/**
+ * Toggle checked on all the checkboxes.
+ */
+const ToggleResourcesCheckboxes = async () => {
+    const panel = qs('panel#PanelResources'),
+        mcb = panel.qs('input#ToggleResourcesCheckboxesTrigger'),
+        cbl = panel.qsa('input.resources-bulk-action');
+    
+    cbl.forEach(cb => {
+        cb.checked = mcb.checked;
+    });
 };
 
 /**
@@ -810,22 +934,31 @@ const TogglePanel = async (e, passedId, passedEid) => {
     window['PanelResourceDelete'] = PanelResourceDelete;
     window['TogglePanel'] = TogglePanel;
     window['ToggleElementHiddenState'] = ToggleElementHiddenState;
+    window['PanelResourcesBulkAdd'] = PanelResourcesBulkAdd;
+    window['PanelResourcesBulkDelete'] = PanelResourcesBulkDelete;
+    window['PanelResourcesBulkToggleActive'] = PanelResourcesBulkToggleActive;
+    window['ToggleResourcesCheckboxes'] = ToggleResourcesCheckboxes;
 
     // Map click auto-functions.
-    qsa('a').forEach(a => {
-        const fn = a.getAttribute('data-on-click');
+    [
+        'a',
+        'input'
+    ].forEach(tag => {
+        qsa(tag).forEach(el => {
+            const fn = el.getAttribute('data-on-click');
 
-        if (!fn) {
-            return;
-        }
-
-        if (!window[fn]) {
-            console.error(`Implementation Error! Function not found: ${fn}`);
-            return;
-        }
-
-        a.addEventListener('click', BrowserHistoryAdd);
-        a.addEventListener('click', window[fn]);
+            if (!fn) {
+                return;
+            }
+    
+            if (!window[fn]) {
+                console.error(`Implementation Error! Function not found: ${fn}`);
+                return;
+            }
+    
+            el.addEventListener('click', BrowserHistoryAdd);
+            el.addEventListener('click', window[fn]);
+        });
     });
 
     // Setup pop-state.

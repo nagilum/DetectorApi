@@ -26,6 +26,22 @@ const CreateResource = async (name, url) => {
 };
 
 /**
+ * Create multiple resources in one go.
+ * @param {Array} urls List of URLs.
+ */
+const CreateResourcesBulk = async (urls) => {
+    await fetch(
+        '/api/resource/bulk',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(urls)
+        });
+};
+
+/**
  * Delete a resource from the API.
  * @param {String} id Resource ID.
  */
@@ -36,6 +52,20 @@ const DeleteResource = async (id) => {
             method: 'DELETE'
         });
 };
+
+/**
+ * Delete multiple resources in bulk.
+ * @param {Array} ids List of resource IDs.
+ */
+const DeleteResourcesBulk = async (ids) => {
+    const url = `/api/resource/bulk/${ids.join(',')}`;
+
+    await fetch(
+        url,
+        {
+            method: 'DELETE'
+        });
+}
 
 /**
  * Get alerts from API.
@@ -167,6 +197,20 @@ const GetUser = async () => {
     return res?.status === 200
         ? await res.json()
         : null;
+};
+
+/**
+ * Toggle active on multiple resources in bulk.
+ * @param {Array} ids List of resource Ids.
+ */
+const ToggleResourcesActiveBulk = async (ids) => {
+    const url = `/api/resource/toggle-active/bulk/${ids.join(',')}`;
+
+    await fetch(
+        url,
+        {
+            method: 'POST'
+        });
 };
 
 /**
