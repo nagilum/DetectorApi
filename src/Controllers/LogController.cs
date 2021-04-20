@@ -16,10 +16,11 @@ namespace DetectorApi.Controllers
         /// Get all log messages attached to a resource.
         /// </summary>
         /// <param name="resourceId">Id of resource.</param>
+        /// <param name="limit">Limit the number of log entries returned.</param>
         /// <returns>List of logs.</returns>
         [HttpGet]
         [VerifyAuthorization]
-        public async Task<ActionResult> GetAll([FromQuery] string resourceId = null)
+        public async Task<ActionResult> GetAll([FromQuery] string resourceId = null, [FromQuery] int? limit = null)
         {
             if (resourceId == null)
             {
@@ -47,6 +48,13 @@ namespace DetectorApi.Controllers
                                 n.ReferenceId == resource.Id)
                     .OrderByDescending(n => n.Created)
                     .ToListAsync();
+
+                if (limit.HasValue)
+                {
+                    logs = logs
+                        .Take(limit.Value)
+                        .ToList();
+                }
 
                 return this.Ok(logs);
             }

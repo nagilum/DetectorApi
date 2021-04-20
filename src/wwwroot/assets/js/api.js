@@ -55,6 +55,19 @@ const GetAlerts = async (id) => {
 };
 
 /**
+ * Get graphs for a resource.
+ * @param {String} id Resource id.
+ * @returns {Array} List of graph points.
+ */
+const GetGraph = async (id) => {
+    const res = await fetch(`/api/graph/resource/${id}`);
+
+    return res?.status === 200
+        ? await res.json()
+        : [];
+};
+
+/**
  * Get issues from API.
  * @param {String} id Resource id.
  * @returns {Array} List of issues.
@@ -74,10 +87,21 @@ const GetIssues = async (id) => {
 /**
  * Get logs from API.
  * @param {String} id Resource id.
+ * @param {Number} limit Limit the number of log entries returned.
  * @returns {Array} List of logs.
  */
-const GetLogs = async (id) => {
-    const res = await fetch(`/api/log?resourceId=${id}`);
+const GetLogs = async (id, limit) => {
+    let url = '/api/log';
+
+    const qsp = [`resourceId=${id}`];
+
+    if (limit) {
+        qsp.push(`limit=${limit}`);
+    }
+
+    url += `?${qsp.join('&')}`;
+
+    const res = await fetch(url);
 
     return res?.status === 200
         ? await res.json()

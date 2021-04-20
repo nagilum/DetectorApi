@@ -19,6 +19,8 @@ namespace DetectorApi.Database
 
         public DbSet<Alert> Alerts { get; set; }
 
+        public DbSet<GraphData> GraphData { get; set; }
+
         public DbSet<Issue> Issues { get; set; }
 
         public DbSet<Log> Logs { get; set; }

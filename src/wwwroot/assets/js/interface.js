@@ -406,7 +406,8 @@ const PanelResourceLoad = async () => {
         resource = await GetResource(eid),
         issues = await GetIssues(eid),
         alerts = await GetAlerts(eid),
-        logs = await GetLogs(eid);
+        logs = await GetLogs(eid),
+        graphs = await GetGraph(eid);
 
     panel.classList.remove('loading');
 
@@ -458,58 +459,65 @@ const PanelResourceLoad = async () => {
     tbNextScan.value = resource.nextScan;
 
     // Graph
-    if (resource.graphJson) {
-        try {
-            const gpl = JSON.parse(resource.graphJson),
-                ctx = qs('canvas#graph').getContext('2d'),
-                labels = [],
-                backgroundColor = [],
-                borderColor = [],
-                data = [];
+    try {
+        const wrapper = qs('div#GraphWrapper'),
+            canvas = ce('canvas');
 
-            gpl.forEach(gp => {
-                if (gp.st === 'Ok') {
-                    backgroundColor.push('#009900');
-                    borderColor.push('#00ff00');
-                    labels.push('');
-                }
-                else {
-                    backgroundColor.push('#990000');
-                    borderColor.push('#ff0000');
-                    labels.push(gp.dt);
-                }
+        wrapper.innerHTML = '';
 
-                data.push(gp.rt);
-            });
+        canvas.setAttribute('height', '100');
+        canvas.setAttribute('width', '1000');
 
-            new Chart(
-                ctx,
-                {
-                    type: 'line',
-                    data: {
-                        labels,
-                        datasets: [
-                            {
-                                label: 'Response Times (ms)',
-                                data,
-                                backgroundColor,
-                                borderColor,
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+        wrapper.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d'),
+            labels = [],
+            backgroundColor = [],
+            borderColor = [],
+            data = [];
+
+        graphs.forEach(gp => {
+            if (gp.st === 'Ok') {
+                backgroundColor.push('#009900');
+                borderColor.push('#00ff00');
+                labels.push('');
+            }
+            else {
+                backgroundColor.push('#990000');
+                borderColor.push('#ff0000');
+                labels.push(gp.dt);
+            }
+
+            data.push(gp.rt ?? 0);
+        });
+
+        new Chart(
+            ctx,
+            {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Response Times (ms)',
+                            data,
+                            backgroundColor,
+                            borderColor,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
-                });
-        }
-        catch {
-            //
-        }
+                }
+            });
+    }
+    catch {
+        //
     }
 
     // Clear tables.
