@@ -409,6 +409,7 @@ const PanelResourceSave = async () => {
 const PanelResourceToggleActive = async () => {
     const panel = qs('panel#PanelResource'),
         id = panel.getAttribute('data-entity-id'),
+        buttonToggleActive = qs('a#PanelResourceToggleActiveButton'),
         tbStatus = panel.qs('input#TextBoxEditResourceStatus');
     
     let resource = await GetResource(id);
@@ -427,6 +428,10 @@ const PanelResourceToggleActive = async () => {
     }
 
     if (resource.active === null || resource.active === true) {
+        buttonToggleActive.innerText = 'Pause';
+        buttonToggleActive.classList.add('danger');
+        buttonToggleActive.classList.remove('success');
+
         if (!resource.status) {
             tbStatus.value = 'Not Scanned';
             tbStatus.classList = 'readonly';
@@ -438,6 +443,10 @@ const PanelResourceToggleActive = async () => {
         }
     }
     else {
+        buttonToggleActive.innerText = 'Activate';
+        buttonToggleActive.classList.remove('danger');
+        buttonToggleActive.classList.add('success');
+
         tbStatus.value = 'Paused';
         tbStatus.classList = 'readonly';
     }
@@ -457,7 +466,8 @@ const PanelResourceLoad = async () => {
 
     panel.classList.remove('loading');
 
-    const tbId = qs('input#TextBoxEditResourceId'),
+    const buttonToggleActive = qs('a#PanelResourceToggleActiveButton'),
+        tbId = qs('input#TextBoxEditResourceId'),
         tbStatus = qs('input#TextBoxEditResourceStatus'),
         tbName = qs('input#TextBoxEditResourceName'),
         tbUrl = qs('input#TextBoxEditResourceUrl'),
@@ -479,6 +489,9 @@ const PanelResourceLoad = async () => {
 
     // Status
     if (resource.active === null || resource.active === true) {
+        buttonToggleActive.innerText = 'Pause';
+        buttonToggleActive.classList.add('danger');
+
         if (!resource.status) {
             tbStatus.value = 'Not Scanned';
             tbStatus.classList = 'readonly';
@@ -490,6 +503,9 @@ const PanelResourceLoad = async () => {
         }
     }
     else {
+        buttonToggleActive.innerText = 'Activate';
+        buttonToggleActive.classList.remove('danger');
+
         tbStatus.value = 'Paused';
         tbStatus.classList = 'readonly';
     }
