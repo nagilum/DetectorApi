@@ -269,12 +269,9 @@ const PanelResourcesLoad = async () => {
     resources.forEach(resource => {
         const tr = ce('tr'),
             tdCheck = ce('td'),
-            tdStatus = ce('td'),
-            tdId = ce('td'),
             tdName = ce('td'),
             tdUrl = ce('td'),
-            tdLastScan = ce('td'),
-            tdNextScan = ce('td');
+            tdStatus = ce('td');
 
         // Checkbox for bulk actions.
         const cb = ce('input');
@@ -284,36 +281,6 @@ const PanelResourcesLoad = async () => {
         cb.classList.add('resources-bulk-action');
 
         tdCheck.appendChild(cb);
-
-        // Status
-        if (resource.active === null || resource.active === true) {
-            if (!resource.status) {
-                tdStatus.innerText = 'Not Scanned';
-                tdStatus.classList.add('status');
-            }
-            else {
-                tdStatus.innerText = resource.status;
-                tdStatus.classList.add('status');
-                tdStatus.classList.add(resource.status.toLowerCase());
-            }
-        }
-        else {
-            tdStatus.innerText = 'Paused';
-            tdStatus.classList.add('status');
-        }
-
-        // Id
-        const aid = ce('a');
-
-        aid.innerText = resource.identifier;
-        aid.setAttribute('href', `/#resource/${resource.identifier}`);
-        aid.setAttribute('data-dom-id', 'PanelResource');
-        aid.setAttribute('data-entity-id', resource.identifier);
-        aid.setAttribute('data-type', 'resource');
-        aid.addEventListener('click', BrowserHistoryAdd);
-        aid.addEventListener('click', TogglePanel);
-
-        tdId.appendChild(aid);
 
         // Name
         const aname = ce('a');
@@ -337,20 +304,28 @@ const PanelResourcesLoad = async () => {
 
         tdUrl.appendChild(aurl);
 
-        // Last Scan
-        tdLastScan.innerText = resource.lastScan;
-
-        // Next Scan
-        tdNextScan.innerText = resource.nextScan;
+        // Status
+        if (resource.active === null || resource.active === true) {
+            if (!resource.status) {
+                tdStatus.innerText = 'Not Scanned';
+                tdStatus.classList.add('status');
+            }
+            else {
+                tdStatus.innerText = resource.status;
+                tdStatus.classList.add('status');
+                tdStatus.classList.add(resource.status.toLowerCase());
+            }
+        }
+        else {
+            tdStatus.innerText = 'Paused';
+            tdStatus.classList.add('status');
+        }
 
         // Done
         tr.appendChild(tdCheck);
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdId);
         tr.appendChild(tdName);
         tr.appendChild(tdUrl);
-        tr.appendChild(tdLastScan);
-        tr.appendChild(tdNextScan);
+        tr.appendChild(tdStatus);
         tbody.appendChild(tr);
     });
 };

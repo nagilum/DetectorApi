@@ -211,8 +211,7 @@ body {
       text-transform: uppercase; }
     body panel table {
       margin: 0;
-      padding: 0;
-      width: 100%; }
+      padding: 0; }
       body panel table thead {
         margin: 0;
         padding: 0; }
