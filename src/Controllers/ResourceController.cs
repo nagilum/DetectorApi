@@ -67,6 +67,7 @@ namespace DetectorApi.Controllers
                 {
                     Created = DateTimeOffset.Now,
                     Updated = DateTimeOffset.Now,
+                    Active = true,
                     Identifier = id,
                     Name = payload.Name,
                     Url = payload.Url
@@ -231,12 +232,6 @@ namespace DetectorApi.Controllers
 
             try
             {
-                if (payload.Name == null ||
-                    payload.Url == null)
-                {
-                    throw new BadRequestResponseException("Name and/or URL cannot be blank");
-                }
-
                 var changes = new List<ChangeEntry>();
 
                 await using var db = new DatabaseContext();
@@ -250,7 +245,8 @@ namespace DetectorApi.Controllers
                     throw new NotFoundResponseException();
                 }
 
-                if (resource.Name != payload.Name)
+                if (!string.IsNullOrWhiteSpace(payload.Name) &&
+                    resource.Name != payload.Name)
                 {
                     changes.Add(
                         new ChangeEntry
@@ -259,9 +255,12 @@ namespace DetectorApi.Controllers
                             OldValue = resource.Name,
                             NewValue = payload.Name
                         });
+
+                    resource.Name = payload.Name;
                 }
 
-                if (resource.Url != payload.Url)
+                if (!string.IsNullOrWhiteSpace(payload.Url) &&
+                    resource.Url != payload.Url)
                 {
                     changes.Add(
                         new ChangeEntry
@@ -270,11 +269,28 @@ namespace DetectorApi.Controllers
                             OldValue = resource.Url,
                             NewValue = payload.Url
                         });
+
+                    resource.Url = payload.Url;
                 }
 
-                resource.Updated = DateTimeOffset.Now;
-                resource.Name = payload.Name;
-                resource.Url = payload.Url;
+                if (payload.Active.HasValue &&
+                    payload.Active != resource.Active)
+                {
+                    changes.Add(
+                        new ChangeEntry
+                        {
+                            PropertyName = "Active",
+                            OldValue = resource.Active?.ToString(),
+                            NewValue = payload.Active.Value.ToString()
+                        });
+
+                    resource.Active = payload.Active;
+                }
+
+                if (changes.Any())
+                {
+                    resource.Updated = DateTimeOffset.Now;
+                }
 
                 await db.SaveChangesAsync();
 

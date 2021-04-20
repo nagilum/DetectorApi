@@ -175,7 +175,21 @@ const GetUser = async () => {
  * @param {String} name Name for resoruce.
  * @param {String} url URL for resource.
  */
-const UpdateResource = async (id, name, url) => {
+const UpdateResource = async (id, name, url, active) => {
+    const body = {};
+
+    if (name) {
+        body['name'] = name;
+    }
+
+    if (url) {
+        body['url'] = url;
+    }
+
+    if (typeof(active) !== 'undefined') {
+        body['active'] = active
+    }
+
     await fetch(
         `/api/resource/${id}`,
         {
@@ -183,10 +197,7 @@ const UpdateResource = async (id, name, url) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name,
-                url
-            })
+            body: JSON.stringify(body)
         });
 };
 

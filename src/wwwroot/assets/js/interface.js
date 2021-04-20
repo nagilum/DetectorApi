@@ -267,15 +267,21 @@ const PanelResourcesLoad = async () => {
             tdNextScan = ce('td');
 
         // Status
-        if (!resource.status) {
-            tdStatus.innerText = 'Not Scanned';
-            tdStatus.classList.add('status');
+        if (resource.active === null || resource.active === true) {
+            if (!resource.status) {
+                tdStatus.innerText = 'Not Scanned';
+                tdStatus.classList.add('status');
+            }
+            else {
+                tdStatus.innerText = resource.status;
+                tdStatus.classList.add('status');
+                tdStatus.classList.add(resource.status.toLowerCase());
+            }
         }
         else {
-            tdStatus.innerText = resource.status;
+            tdStatus.innerText = 'Paused';
             tdStatus.classList.add('status');
-            tdStatus.classList.add(resource.status.toLowerCase());
-        }        
+        }
 
         // Id
         const aid = ce('a');
@@ -398,6 +404,46 @@ const PanelResourceSave = async () => {
 };
 
 /**
+ * Pause/unpause a resource.
+ */
+const PanelResourceToggleActive = async () => {
+    const panel = qs('panel#PanelResource'),
+        id = panel.getAttribute('data-entity-id'),
+        tbStatus = panel.qs('input#TextBoxEditResourceStatus');
+    
+    let resource = await GetResource(id);
+
+    const postValue = resource.active === null ||
+                      resource.active === true
+        ? false
+        : true;
+    
+    await UpdateResource(id, null, null, postValue);
+
+    resource = await GetResource(id);
+
+    if (!resource) {
+        return;
+    }
+
+    if (resource.active === null || resource.active === true) {
+        if (!resource.status) {
+            tbStatus.value = 'Not Scanned';
+            tbStatus.classList = 'readonly';
+        }
+        else {
+            tbStatus.value = resource.status;
+            tbStatus.classList = 'readonly';
+            tbStatus.classList.add(resource.status.toLowerCase());
+        }
+    }
+    else {
+        tbStatus.value = 'Paused';
+        tbStatus.classList = 'readonly';
+    }
+};
+
+/**
  * Load and display a single resource.
  */
 const PanelResourceLoad = async () => {
@@ -432,15 +478,21 @@ const PanelResourceLoad = async () => {
     tbId.value = resource.identifier;
 
     // Status
-    if (!resource.status) {
-        tbStatus.value = 'Not Scanned';
-        tbStatus.classList = 'readonly';
+    if (resource.active === null || resource.active === true) {
+        if (!resource.status) {
+            tbStatus.value = 'Not Scanned';
+            tbStatus.classList = 'readonly';
+        }
+        else {
+            tbStatus.value = resource.status;
+            tbStatus.classList = 'readonly';
+            tbStatus.classList.add(resource.status.toLowerCase());
+        }
     }
     else {
-        tbStatus.value = resource.status;
+        tbStatus.value = 'Paused';
         tbStatus.classList = 'readonly';
-        tbStatus.classList.add(resource.status.toLowerCase());
-    }    
+    }
 
     // Name
     tbName.value = resource.name;
@@ -738,6 +790,7 @@ const TogglePanel = async (e, passedId, passedEid) => {
     window['PanelResourceLoad'] = PanelResourceLoad;
     window['PanelResourceCreateNew'] = PanelResourceCreateNew;
     window['PanelResourceSave'] = PanelResourceSave;
+    window['PanelResourceToggleActive'] = PanelResourceToggleActive;
     window['PanelResourceDelete'] = PanelResourceDelete;
     window['TogglePanel'] = TogglePanel;
     window['ToggleElementHiddenState'] = ToggleElementHiddenState;

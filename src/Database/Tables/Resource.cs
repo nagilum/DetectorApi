@@ -29,6 +29,9 @@ namespace DetectorApi.Database.Tables
         public DateTimeOffset? NextScan { get; set; }
 
         [Column]
+        public bool? Active { get; set; }
+
+        [Column]
         [MaxLength(64)]
         public string Identifier { get; set; }
 
