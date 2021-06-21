@@ -19,6 +19,7 @@ namespace DetectorApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(b =>
                 {
+                    b.UseIISIntegration();
                     b.UseStartup<Startup>();
                 })
                 .Build()
